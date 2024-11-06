@@ -1,12 +1,37 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 
 export default StyleSheet.create({
   image: {
     flex: 1,
-    justifyContent: 'center',
+    width: Dimensions.get("screen").width,
+    height: Dimensions.get("screen").height,
+  },
+  bordercontent: {
+    flexDirection: 'row', 
+    backgroundColor: '#8BFFBA',
+    alignItems: 'center',
+    marginTop: 65,
+    marginLeft: 100,
+    marginRight: 100,
+    padding: 15,
+    borderRadius: 50,
+  },
+  feedbackBorder: {
+    backgroundColor: '#CDF5F8',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    marginBottom: 80,
+    marginHorizontal: 20,
+    borderRadius: 10,
+    height: 300, 
+    marginTop: 30,
+    borderWidth: 1,
+  },
+  scrollContent: {
+    paddingBottom: 20, 
   },
   container: {
-    flex: 1,
+    
   },
   buttonborder: {
     flexDirection: 'row',
@@ -20,13 +45,13 @@ export default StyleSheet.create({
     borderRadius: 50,
     backgroundColor: '#A0C5E5',
     paddingHorizontal: 40,
+    marginBottom: 90
   },
   iconContainer: {
     backgroundColor: '#6BA6D4',  
-    borderRadius: 100,         
-    padding: 10,               
+    borderRadius: 100,          
+    padding: 10,             
   },
-  
   backButton: {
     position: 'absolute',
     top: 40,
@@ -34,5 +59,33 @@ export default StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
     borderRadius: 10,
     padding: 5,
+  },
+  label: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 5,
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#A1C7E4',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 15,
+  },
+  messageInput: {
+    height: 100, 
+    textAlignVertical: 'top',  
+  },
+  submitButton: {
+    backgroundColor: '#6D9EFF',
+    borderRadius: 10,
+    paddingVertical: 10,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  submitButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
