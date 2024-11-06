@@ -1,5 +1,7 @@
 import { View, ImageBackground, TouchableOpacity, Text } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import HomeIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import ChatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import styles from './analyticsStyle'; 
 
 export default function AnalyticsScreen({ navigation }) {
@@ -10,8 +12,9 @@ export default function AnalyticsScreen({ navigation }) {
       resizeMode="cover"
     >
       <View style={styles.container}>
-        <View style={styles.content}>
-          
+        <View style={styles.bordercontent}>
+        <HomeIcon name="home-analytics" size={35} color="black" />
+          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 20 }}>Analytics</Text>
         </View>
       </View>
 
@@ -37,8 +40,9 @@ export default function AnalyticsScreen({ navigation }) {
     <TouchableOpacity onPress={() => navigation.navigate('Settings')}>
     <Icon name="settings" size={30} color="black" />
     </TouchableOpacity>
-
-    <Icon name="feedback" size={30} color="black" />
+    <TouchableOpacity onPress={() => navigation.navigate('Feedback')}>
+    <ChatIcon name="message-processing" size={30} color="black" />
+    </TouchableOpacity>
 </View>
     </ImageBackground>
   );

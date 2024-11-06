@@ -31,8 +31,8 @@ export default StyleSheet.create({
     position: 'absolute',
     top: 40,
     left: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 10,
     padding: 5,
   },
 });

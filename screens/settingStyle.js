@@ -5,6 +5,18 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+  bordercontent: {
+    flexDirection: 'row', 
+    backgroundColor: '#8BFFBA',
+    alignItems: 'center',
+    marginTop: 65,
+    marginLeft: 100,
+    marginRight: 100,
+    padding: 15,
+    borderRadius: 50,
+
+  },
+  
   container: {
     flex: 1,
   },
@@ -31,8 +43,8 @@ export default StyleSheet.create({
     position: 'absolute',
     top: 40,
     left: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-    borderRadius: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    borderRadius: 10,
     padding: 5,
   },
 });
