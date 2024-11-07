@@ -3,40 +3,64 @@ import { StyleSheet } from 'react-native';
 export default StyleSheet.create({
   image: {
     flex: 1,
-    justifyContent: 'center',
+    
   },
   container: {
+
+  },
+  HomepageText: {
+    marginTop: 30,
+    marginLeft: 20,
+    fontSize: 20,
+  },
+  HomePagecontent: {
+    backgroundColor: '#C3F7FF',
+    borderWidth: 0.9,
+    borderColor: 'black',
+    marginHorizontal: 10,
+    marginTop: 200,
+    borderRadius: 20,
+    padding: 40,
+    height: 250,  
+ 
+  },
+  networkTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  networkRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
+  networkText: {
+    flex: 2,
+    fontSize: 15,
+  },
+  networkValue: {
     flex: 1,
+    fontSize: 14,
+  },
+  networkStatus: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: 'bold',
+   
   },
   buttonborder: {
     flexDirection: 'row',
-    justifyContent: 'space-between', 
+    justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'black',
     paddingVertical: 15,
-    marginHorizontal: 50,  
+    marginHorizontal: 50,
     marginBottom: 50,
+    marginTop: 65,
     borderRadius: 50,
     backgroundColor: '#A0C5E5',
-    paddingHorizontal: 40, 
+    paddingHorizontal: 40
   },
-  content: {
-    backgroundColor: 'white',
-    borderWidth: 2,
-    borderColor: 'black',
-    marginHorizontal: 20, 
-    marginTop: 230,
-    borderRadius: 50,
-    padding: 130,
-  },
-  backButton: {
-    position: 'absolute',
-    top: 40, 
-    left: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.7)',  
-    borderRadius: 20,
-    padding: 5,
-  },
-  
+ 
 });

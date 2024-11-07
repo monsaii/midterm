@@ -23,7 +23,7 @@ export default StyleSheet.create({
     marginBottom: 80,
     marginHorizontal: 20,
     borderRadius: 10,
-    height: 300, 
+    height: 340, 
     marginTop: 30,
     borderWidth: 1,
   },
@@ -37,7 +37,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'black',
     paddingVertical: 15,
     marginHorizontal: 50,
@@ -49,8 +49,7 @@ export default StyleSheet.create({
   },
   iconContainer: {
     backgroundColor: '#6BA6D4',  
-    borderRadius: 100,          
-    padding: 10,             
+    borderRadius: 100,                      
   },
   backButton: {
     position: 'absolute',
@@ -78,14 +77,16 @@ export default StyleSheet.create({
     textAlignVertical: 'top',  
   },
   submitButton: {
-    backgroundColor: '#6D9EFF',
+    backgroundColor: '#656ED3',
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: 'center',
     marginTop: 10,
+    marginLeft: 90,
+    marginHorizontal: 90,
   },
   submitButtonText: {
-    color: '#fff',
     fontWeight: 'bold',
+    
   },
 });

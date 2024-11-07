@@ -22,7 +22,7 @@ export default StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 1,
     borderColor: 'black',
     paddingVertical: 15,
     marginHorizontal: 50,
@@ -34,7 +34,6 @@ export default StyleSheet.create({
   iconContainer: {
     backgroundColor: '#6BA6D4', 
     borderRadius: 100,
-    padding: 10,
   },
   backButton: {
     position: 'absolute',
