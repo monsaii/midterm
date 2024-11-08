@@ -5,6 +5,9 @@ export default StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
   },
+  container: {
+    flex: 1,
+  },
   bordercontent: {
     flexDirection: 'row', 
     backgroundColor: '#8BFFBA',
@@ -15,8 +18,56 @@ export default StyleSheet.create({
     padding: 15,
     borderRadius: 50,
   },
-  container: {
+  notificationsContainer: {
     flex: 1,
+    paddingHorizontal: 20,
+    marginTop: 20,
+    marginBottom: 20
+  },
+  scrollContent: {
+    paddingBottom: 20,
+  },
+  notificationCard: {
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    elevation: 2,
+  },
+  notificationHigh: {
+    backgroundColor: '#F8D7DA', // Red background for high severity
+  },
+  notificationMedium: {
+    backgroundColor: '#FFF3CD', // Yellow background for medium severity
+  },
+  notificationLow: {
+    backgroundColor: '#D1E7DD', // Green background for low severity
+  },
+  notificationHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  notificationTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    color: '#333',
+    flex: 1,
+  },
+  notificationDate: {
+    fontSize: 12,
+    color: '#555',
+    marginLeft: 10,
+  },
+  notificationDescription: {
+    fontSize: 14,
+    color: '#555',
+    marginTop: 5,
+    marginBottom: 10,
+  },
+  viewDetails: {
+    color: '#007BFF',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
   buttonborder: {
     flexDirection: 'row',
@@ -34,6 +85,7 @@ export default StyleSheet.create({
   iconContainer: {
     backgroundColor: '#6BA6D4', 
     borderRadius: 100,
+    padding: 5
   },
   backButton: {
     position: 'absolute',

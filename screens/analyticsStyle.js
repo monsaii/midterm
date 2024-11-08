@@ -35,7 +35,7 @@ export default StyleSheet.create({
   iconContainer: {
     backgroundColor: '#6BA6D4',  
     borderRadius: 100,
-               
+    padding: 5
   },
   
   backButton: {

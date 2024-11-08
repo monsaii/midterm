@@ -18,9 +18,8 @@ export default StyleSheet.create({
   settingsBorder: {
     backgroundColor: '#CDF5F8',
     padding: 10,
-    marginBottom: 80,
     marginHorizontal: 20,
-    borderRadius: 10,
+    borderRadius: 20,
     maxHeight: 350, 
     marginTop: 30,
     borderWidth: 1,
@@ -43,7 +42,8 @@ export default StyleSheet.create({
   },
   iconContainer: {
     backgroundColor: '#6BA6D4',  
-    borderRadius: 100,                     
+    borderRadius: 100,
+    padding: 5                     
   },
   backButton: {
     position: 'absolute',
@@ -57,6 +57,7 @@ export default StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: '#333',
+    marginTop: 10,
     marginBottom: 10,
   },
   settingsItem: {
