@@ -9,20 +9,26 @@ export default StyleSheet.create({
 
   },
   HomepageText: {
-    marginTop: 30,
+    marginTop: 60,
     marginLeft: 20,
     fontSize: 20,
   },
   HomePagecontent: {
-    backgroundColor: '#C3F7FF',
+    backgroundColor: '#D3F9FF',
     borderWidth: 0.9,
     borderColor: 'black',
-    marginHorizontal: 10,
-    marginTop: 200,
+    marginHorizontal: 50,
     borderRadius: 20,
-    padding: 40,
-    height: 250,  
- 
+    padding: 10,
+    height: 200,
+    marginTop: 20,
+  },
+  
+  chartContainer: {
+   alignItems: 'center',
+   marginHorizontal: 20,
+   borderRadius: 20,
+   marginTop: 10,
   },
   networkTitle: {
     fontSize: 16,
@@ -49,6 +55,7 @@ export default StyleSheet.create({
    
   },
   buttonborder: {
+    marginTop: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -57,7 +64,6 @@ export default StyleSheet.create({
     paddingVertical: 15,
     marginHorizontal: 50,
     marginBottom: 50,
-    marginTop: 65,
     borderRadius: 50,
     backgroundColor: '#A0C5E5',
     paddingHorizontal: 40
