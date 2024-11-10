@@ -8,6 +8,7 @@ import AnalyticsScreen from './screens/AnalyticsScreen';
 import NotificationScreen from './screens/NotificationsScreen';
 import SettingScreen from './screens/SettingsScreen';
 import FeedbackScreen from './screens/FeedbackScreen';
+import LoginScreen from './screens/LoginScreen';
 import styles from './style';
 
 const Stack = createStackNavigator();
@@ -75,6 +76,7 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Analytics" component={AnalyticsScreen} />
         <Stack.Screen name="Notifications" component={NotificationScreen} />
