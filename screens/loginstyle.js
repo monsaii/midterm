@@ -5,7 +5,7 @@ export default StyleSheet.create({
     flex: 1,
     width: Dimensions.get("screen").width,
     height: Dimensions.get("screen").height,
-    justifyContent: 'center', // Centers content vertically
+  
     alignItems: 'center', // Centers content horizontally
   },
   container: {
@@ -74,5 +74,14 @@ export default StyleSheet.create({
   googleText: {
     color: '#fff',
     fontSize: 16,
+  },  
+  logo: {
+    width: 100, 
+    height: 100, 
+    marginBottom: 20,
+    borderRadius: 100,
+    marginTop: 40,
+    padding: 70
   },
+
 });

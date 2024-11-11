@@ -14,7 +14,7 @@ export default StyleSheet.create({
     fontSize: 20,
   },
   HomePagecontent: {
-    backgroundColor: '#D3F9FF',
+    backgroundColor: 'rgba(0, 235, 245, 0.9)',
     borderWidth: 0.9,
     borderColor: 'black',
     marginHorizontal: 50,

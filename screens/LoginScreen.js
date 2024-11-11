@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, Image } from 'react-native';
 import styles from './loginstyle';
 import { useNavigation } from '@react-navigation/native';
 
@@ -15,8 +15,14 @@ export default function LoginScreen() {
       style={styles.image}
       resizeMode="cover"
     >
+        <View style={styles.logoBackground}>
+        <Image source={require('../assets/logo(1).png')} 
+        style={styles.logo}/>
+        </View>
+
       <View style={styles.container}>
-        
+
+
         {/* Sign up prompt */}
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have an account?</Text>

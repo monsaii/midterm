@@ -78,7 +78,7 @@ function HomeScreen({ navigation }) {
           <View style={styles.networkRow}>
             <Text style={styles.networkText}>Social Media</Text>
             <Text style={styles.networkValue}>80%</Text>
-            <Text style={[styles.networkStatus, { color: 'red' }]}>Congested</Text>
+            <Text style={[styles.networkStatus, { color: 'red' }]}>Bad</Text>
           </View>
         </ScrollView>
       </View>
