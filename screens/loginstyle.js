@@ -5,8 +5,7 @@ export default StyleSheet.create({
     flex: 1,
     width: Dimensions.get("screen").width,
     height: Dimensions.get("screen").height,
-  
-    alignItems: 'center', // Centers content horizontally
+    alignItems: 'center',
   },
   container: {
     width: '80%',
@@ -14,6 +13,17 @@ export default StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 10,
     alignItems: 'center',
+    marginTop: 20,
+  },
+  logoBackground: {
+    marginTop: 50,
+    marginBottom: 20,
+    alignItems: 'center',
+  },
+  logo: {
+    width: 100, 
+    height: 100, 
+    borderRadius: 50,
   },
   signupContainer: {
     flexDirection: 'row',
@@ -39,6 +49,19 @@ export default StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 15,
+  },
+  passwordContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '100%',
+    height: 40,
+    backgroundColor: '#e8e8e8',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+  },
+  passwordInput: {
+    flex: 1,
   },
   rememberContainer: {
     flexDirection: 'row',
@@ -75,13 +98,4 @@ export default StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },  
-  logo: {
-    width: 100, 
-    height: 100, 
-    marginBottom: 20,
-    borderRadius: 100,
-    marginTop: 40,
-    padding: 70
-  },
-
 });
