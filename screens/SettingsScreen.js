@@ -34,7 +34,10 @@ export default function SettingScreen({ navigation }) {
             </View>
             
             <Text style={styles.sectionHeader}>More</Text>
-            <TouchableOpacity style={styles.settingsItem}>
+            <TouchableOpacity 
+              style={styles.settingsItem}
+              onPress={() => navigation.navigate('AboutUs')}  // Navigate to AboutUs screen
+            >
               <Text style={styles.settingsText}>About us</Text>
               <Icon name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
