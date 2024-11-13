@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, Image, KeyboardAvoidingView, Platform} from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from './loginstyle';
 import { useNavigation } from '@react-navigation/native';
 
@@ -8,6 +9,7 @@ export default function LoginScreen() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
     <ImageBackground 
@@ -15,14 +17,19 @@ export default function LoginScreen() {
       style={styles.image}
       resizeMode="cover"
     >
-        <View style={styles.logoBackground}>
-        <Image source={require('../assets/logo(1).png')} 
-        style={styles.logo}/>
-        </View>
+      
 
+
+      <View style={styles.logoBackground}>
+        <Image 
+          source={require('../assets/logo(1).png')} 
+          style={styles.logo}
+        />
+      </View>
+
+
+      <KeyboardAvoidingView></KeyboardAvoidingView>
       <View style={styles.container}>
-
-
         {/* Sign up prompt */}
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have an account?</Text>
@@ -34,22 +41,34 @@ export default function LoginScreen() {
         {/* Header */}
         <Text style={styles.header}>Nice to see you again</Text>
 
+        {/* Login Input */}
         <TextInput
           style={styles.input}
-          placeholder="Login"
+          placeholder="Login (Email or Phone)"
           value={login}
           onChangeText={setLogin}
-          keyboardType="phone-pad"
+          keyboardType="default" // Accepts both text and numbers
         />
 
-        <TextInput
-          style={styles.input}
-          placeholder="Password"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-        />
+        {/* Password Input with Eye Toggle */}
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={!isPasswordVisible} // Show asterisks when typing
+          />
+          <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
+            <Icon 
+              name={isPasswordVisible ? "visibility" : "visibility-off"} 
+              size={24} 
+              color="gray" 
+            />
+          </TouchableOpacity>
+        </View>
 
+        {/* Remember Me and Forgot Password */}
         <View style={styles.rememberContainer}>
           <TouchableOpacity onPress={() => setRememberMe(!rememberMe)}>
             <Text style={styles.rememberText}>
@@ -61,6 +80,7 @@ export default function LoginScreen() {
           </TouchableOpacity>
         </View>
 
+        {/* Sign In Button */}
         <TouchableOpacity 
           style={styles.signInButton} 
           onPress={() => navigation.navigate('Home')}
@@ -68,6 +88,7 @@ export default function LoginScreen() {
           <Text style={styles.signInText}>Sign in</Text>
         </TouchableOpacity>
 
+        {/* Google Sign In Button */}
         <TouchableOpacity 
           style={styles.googleButton} 
           onPress={() => { /* Handle Google Sign-In */ }}
@@ -75,6 +96,8 @@ export default function LoginScreen() {
           <Text style={styles.googleText}>Or sign in with Google</Text>
         </TouchableOpacity>
       </View>
+      
     </ImageBackground>
+    
   );
 }
