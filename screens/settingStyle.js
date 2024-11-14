@@ -9,11 +9,10 @@ export default StyleSheet.create({
     flexDirection: 'row', 
     backgroundColor: '#8BFFBA',
     alignItems: 'center',
-    marginTop: 65,
-    marginLeft: 100,
-    marginRight: 100,
     padding: 15,
     borderRadius: 50,
+    alignSelf: 'center',
+    marginTop: 50,
   },
   settingsBorder: {
     backgroundColor: '#CDF5F8',

@@ -17,13 +17,13 @@ export default StyleSheet.create({
     padding: 15,
     borderRadius: 50,
     alignSelf: 'center',
-    marginTop: 65,
+    marginTop: 50,
     
   },
   dateSelector: {
     flexDirection: 'row',
     marginLeft: 20,
-    marginTop: 20,
+    marginTop: 10,
     
   },
   dateButton: {
@@ -67,8 +67,6 @@ export default StyleSheet.create({
     marginTop:10,
     borderRadius: 20,
     padding: 10,
-    paddingTop: 20,
-    paddingBottom: 20,
     marginHorizontal: 10,
   },
   chartTitle: {
@@ -141,4 +139,41 @@ export default StyleSheet.create({
     borderRadius: 10,
     padding: 5,
   },
+  modal: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 0, // Center the modal without extra margins
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+    elevation: 5, // Shadow for Android
+    shadowColor: '#000', // Shadow for iOS
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+    color: '#333',
+  },
+  modalOption: {
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    width: '100%',
+    alignItems: 'center',
+  },
+  modalOptionText: {
+    fontSize: 16,
+    color: '#333',
+  },
+
+
+  
 });
