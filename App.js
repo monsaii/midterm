@@ -10,6 +10,7 @@ import SettingScreen from './screens/SettingsScreen';
 import FeedbackScreen from './screens/FeedbackScreen';
 import LoginScreen from './screens/LoginScreen';
 import AboutUs from './settingFolder/AboutUs';
+import ViewDetails from './notificationFolder/viewDetail';
 import { BarChart } from 'react-native-chart-kit';
 import styles from './style';
 
@@ -117,6 +118,7 @@ export default function App() {
         <Stack.Screen name="Settings" component={SettingScreen} />
         <Stack.Screen name="Feedback" component={FeedbackScreen} />
         <Stack.Screen name="AboutUs" component={AboutUs} />
+        <Stack.Screen name="ViewDetails" component={ViewDetails} />
       </Stack.Navigator>
     </NavigationContainer>
   );
