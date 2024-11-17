@@ -20,11 +20,11 @@ export default function SettingScreen({ navigation }) {
         <View style={styles.settingsBorder}>
           <ScrollView>
             <Text style={styles.sectionHeader}>Account Settings</Text>
-            <TouchableOpacity style={styles.settingsItem} onPress={() => navigation.navigate('EditProfile')}>
+            <TouchableOpacity style={styles.settingsItem}>
               <Text style={styles.settingsText}>Edit profile</Text>
               <Icon name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.settingsItem} onPress={() => navigation.navigate('ChangePassword')}>
+            <TouchableOpacity style={styles.settingsItem}>
               <Text style={styles.settingsText}>Change password</Text>
               <Icon name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
@@ -36,16 +36,17 @@ export default function SettingScreen({ navigation }) {
             <Text style={styles.sectionHeader}>More</Text>
             <TouchableOpacity 
               style={styles.settingsItem}
-              onPress={() => navigation.navigate('AboutUs')}
+              onPress={() => navigation.navigate('AboutUs')}  // Navigate to AboutUs screen
             >
               <Text style={styles.settingsText}>About us</Text>
               <Icon name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity 
-              style={styles.settingsItem}
-              onPress={() => navigation.navigate('AboutApp')}
-            >
-              <Text style={styles.settingsText}>About App</Text>
+            <TouchableOpacity style={styles.settingsItem}>
+              <Text style={styles.settingsText}>Privacy policy</Text>
+              <Icon name="chevron-right" size={24} color="black" />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.settingsItem}>
+              <Text style={styles.settingsText}>Terms and conditions</Text>
               <Icon name="chevron-right" size={24} color="black" />
             </TouchableOpacity>
           </ScrollView>
@@ -63,12 +64,15 @@ export default function SettingScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.navigate('Analytics')}>
           <Icon name="analytics" size={30} color="black" />
         </TouchableOpacity>
+        
         <TouchableOpacity onPress={() => navigation.navigate('Notifications')}>
           <Icon name="notifications" size={30} color="black" />
         </TouchableOpacity>
+
         <View style={styles.iconContainer}>
           <Icon name="settings" size={30} color="black" />
         </View>
+
         <TouchableOpacity onPress={() => navigation.navigate('Feedback')}>
           <ChatIcon name="message-processing" size={30} color="black" />
         </TouchableOpacity>

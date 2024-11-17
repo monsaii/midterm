@@ -12,6 +12,8 @@ import LoginScreen from './screens/LoginScreen';
 import AboutUs from './settingFolder/AboutUs';
 import ViewDetails from './notificationFolder/viewDetail';
 import AboutApp from './settingFolder/AboutApp';
+import ChangePass from './settingFolder/changePass';
+import EditProfile from './settingFolder/editProfile';
 import { BarChart } from 'react-native-chart-kit';
 import styles from './style';
 
@@ -121,6 +123,8 @@ export default function App() {
         <Stack.Screen name="AboutUs" component={AboutUs} />
         <Stack.Screen name="ViewDetails" component={ViewDetails} />
         <Stack.Screen name="AboutApp" component={AboutApp} />
+        <Stack.Screen name="ChangePassword" component={ChangePass} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
       </Stack.Navigator>
     </NavigationContainer>
   );
