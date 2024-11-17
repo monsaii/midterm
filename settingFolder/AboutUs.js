@@ -11,7 +11,7 @@ export default function AboutUs({ navigation }) {
     >
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerText}>WHO <Text style={styles.headerTextBlack}>WE ARE</Text></Text>
+        <Text style={[styles.headerText, styles.textWithStroke]}>WHO <Text style={styles.headerTextBlack}>WE ARE</Text></Text>
       </View>
 
       {/* Profile Images, Names, and Roles */}
@@ -52,10 +52,6 @@ export default function AboutUs({ navigation }) {
           The application is designed with accessibility and portability in mind, allowing users to monitor network performance anywhere.
         </Text>
 
-        <Text style={styles.descriptionText}>
-          Welcome to our Analytics & Monitoring App! Our mission is to provide seamless, real-time insights into network performance, empowering users to make informed decisions and optimize their digital experiences.
-          With tools to track data traffic, response times, and packet loss, we aim to make monitoring accessible, actionable, and efficient.
-        </Text>
       </View>
 
       {/* Back Button */}

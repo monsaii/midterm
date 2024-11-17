@@ -13,6 +13,12 @@ export default StyleSheet.create({
     color: '#FFD700',  // Yellow color
     fontWeight: 'bold',
   },
+    textWithStroke: {
+      textShadowColor: 'black', // Stroke color
+      textShadowOffset: { width: 1, height: 1 }, // Stroke thickness
+      textShadowRadius: 1, // Blur radius for stroke
+    
+  },
   headerTextBlack: {
     color: 'black',
   },
