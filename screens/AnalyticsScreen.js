@@ -61,7 +61,7 @@ export default function AnalyticsScreen({ navigation }) {
         
         <View style={styles.bordercontent}>
           <HomeIcon name="home-analytics" size={35} color="black" />
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 20 }}>Analytics</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 10 }}>Historical Data</Text>
         </View>
 
         {/* Date Selector */}
