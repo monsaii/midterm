@@ -6,12 +6,12 @@ export default StyleSheet.create({
     justifyContent: 'center',
   },
   container: {
-    backgroundColor: 'rgba(255, 255, 255, 0.85)', // Slightly less transparent
+    backgroundColor: 'rgba(255, 255, 255, 0.9)', // Slight transparency
     marginHorizontal: 20,
-    borderRadius: 20, // More rounded corners for modern design
-    padding: 25, // Increase padding for better spacing
-    elevation: 8, // Stronger shadow for card effect (Android)
-    shadowColor: '#000', // Shadow color for iOS
+    borderRadius: 20,
+    padding: 25, // Consistent padding
+    elevation: 8, // Shadow for Android
+    shadowColor: '#000', // Shadow for iOS
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.3,
     shadowRadius: 5,
@@ -26,8 +26,8 @@ export default StyleSheet.create({
   input: {
     backgroundColor: '#fff', // Clean white input
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 12, // Rounded corners for inputs
+    borderColor: '#ddd',
+    borderRadius: 12, // Rounded corners
     padding: 12,
     fontSize: 16,
     marginBottom: 15,
@@ -35,7 +35,7 @@ export default StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 3,
-    elevation: 2, // Add slight elevation for inputs (Android)
+    elevation: 2, // Slight elevation for inputs (Android)
   },
   button: {
     backgroundColor: '#4CAF50', // Modern green button
