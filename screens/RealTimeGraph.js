@@ -5,9 +5,8 @@ import { LineChart } from 'react-native-chart-kit';
 const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps" }) => {
   const screenWidth = Dimensions.get('window').width;
 
-  // Reduce the number of labels shown
   const labelsToShow = data.labels.map((label, index) =>
-    index % 2 === 0 ? label : '' // Show every second label to prevent overcrowding
+    index % 2 === 0 ? label : ''
   );
 
   return (
@@ -18,8 +17,8 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps" }) => {
           labels: labelsToShow.slice(0, data.values.length),
           datasets: [{ data: data.values }],
         }}
-        width={screenWidth - 50} // Adjust width to fit screen
-        height={220}
+        width={screenWidth - 70} // Adjust width to fit screen
+        height={250}
         yAxisSuffix={yAxisSuffix} // Dynamic suffix
         chartConfig={{
           backgroundColor: '#1cc910',
@@ -29,21 +28,21 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps" }) => {
           color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
           propsForHorizontalLabels: {
-            fontSize: 10, // Decrease font size for timestamps
+            fontSize: 9,
           },
           propsForVerticalLabels: {
-            fontSize: 10, // Decrease font size for Y-axis labels
+            fontSize: 10,
           },
           propsForDots: {
-            r: '4',
+            r: '6',
             strokeWidth: '2',
             stroke: '#ffa726',
           },
-          
+          paddingLeft: 20, // Add space between Y-axis labels and graph
         }}
         style={{
           borderRadius: 16,
-          marginVertical: 10, // Add space above and below the chart
+          marginVertical: 10,
           
         }}
       />
@@ -53,16 +52,17 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps" }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20, // Add space between graphs vertically
-    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Optional: Light background for contrast
+    marginVertical: 20,
+    marginHorizontal: 10,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
     borderRadius: 10,
-    padding: 10, // Add padding inside the graph container
+    padding: 10,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 8, // Space between title and graph
+    marginBottom: 8,
   },
 });
 
