@@ -50,7 +50,6 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     paddingVertical: 15,
     marginHorizontal: 50,
-    marginBottom: 50,
     borderRadius: 50,
     backgroundColor: '#A0C5E5',
     paddingHorizontal: 40,

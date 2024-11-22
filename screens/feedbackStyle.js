@@ -30,7 +30,6 @@ export default StyleSheet.create({
     paddingBottom: 20, 
   },
   container: {
-    
   },
   buttonborder: {
     flexDirection: 'row',

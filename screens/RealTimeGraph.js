@@ -61,8 +61,8 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps" }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20, // Space above and below the graph container
-    backgroundColor: 'rgba(255, 255, 255, 0.5)', // Semi-transparent white background
+    marginVertical: 10, // Space above and below the graph container
+    backgroundColor: 'rgba(255, 255, 255, 0.7)', // Semi-transparent white background
     borderRadius: 30, // Rounded corners
     padding: 15, // Inner padding
   },
@@ -70,10 +70,9 @@ const styles = StyleSheet.create({
     fontSize: 18, // Title font size
     fontWeight: 'bold', // Title font weight
     textAlign: 'center', // Centered title
-    marginBottom: 8, // Space below the title
   },
   scrollContainer: {
-    paddingHorizontal: 10, // Horizontal padding inside the scrollable area
+    paddingHorizontal: 10, 
   },
 });
 
