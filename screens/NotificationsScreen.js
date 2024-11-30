@@ -1,60 +1,126 @@
-import React, { useState } from 'react';
-import { View, ImageBackground, TouchableOpacity, Text, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import {
+  View,
+  ImageBackground,
+  TouchableOpacity,
+  Text,
+  ScrollView,
+  Alert,
+  Modal,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import NotificationIcon from 'react-native-vector-icons/Ionicons';
 import ChatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import styles from './notificationStyle';
 
 export default function NotificationScreen({ navigation }) {
-  const [notifications, setNotifications] = useState([
-    {
-      id: 1,
-      title: "Action Required: Network Congestion Detected",
-      description: "High congestion levels detected. Immediate action is recommended to prevent service disruption.",
-      severity: "High",
-      date: "04/11/2024",
-    },
-    {
-      id: 2,
-      title: "Potential Congestion: Elevated Traffic Levels",
-      description: "Monitor closely and prepare to implement congestion control measures if levels continue to rise.",
-      severity: "Medium",
-      date: "04/11/2024",
-    },
-    {
-      id: 3,
-      title: "Network Performance Stable",
-      description: "Traffic levels are within normal operating parameters. No immediate action is needed.",
-      severity: "Low",
-      date: "04/11/2024",
-    },
-  ]);
+  const [notifications, setNotifications] = useState([]);
+  const [selectedNotification, setSelectedNotification] = useState(null);
+  const [detailsModalVisible, setDetailsModalVisible] = useState(false);
 
-  const removeNotification = (id) => {
-    setNotifications(notifications.filter((notification) => notification.id !== id));
+  useEffect(() => {
+    const loadNotifications = async () => {
+      try {
+        const storedNotifications = await AsyncStorage.getItem('notifications');
+        if (storedNotifications) {
+          setNotifications(JSON.parse(storedNotifications));
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to load notifications.');
+        console.error(error);
+      }
+    };
+
+    loadNotifications();
+  }, []);
+
+  const removeNotification = async (id) => {
+    const updatedNotifications = notifications.filter(
+      (notification) => notification.id !== id
+    );
+    setNotifications(updatedNotifications);
+
+    try {
+      await AsyncStorage.setItem(
+        'notifications',
+        JSON.stringify(updatedNotifications)
+      );
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update notifications.');
+      console.error(error);
+    }
+  };
+
+  const clearAllNotifications = async () => {
+    Alert.alert('Confirm', 'Are you sure you want to clear all notifications?', [
+      { text: 'Cancel', style: 'cancel' },
+      {
+        text: 'Clear',
+        onPress: async () => {
+          try {
+            await AsyncStorage.removeItem('notifications');
+            setNotifications([]);
+            Alert.alert('Success', 'All notifications cleared.');
+          } catch (error) {
+            Alert.alert('Error', 'Failed to clear notifications.');
+            console.error(error);
+          }
+        },
+      },
+    ]);
+  };
+
+  const viewDetails = (notification) => {
+    setSelectedNotification(notification);
+    setDetailsModalVisible(true);
   };
 
   return (
-    <ImageBackground 
-      source={require('../assets/monitoring.png')} 
+    <ImageBackground
+      source={require('../assets/monitoring.png')}
       style={styles.image}
       resizeMode="cover"
     >
       <View style={styles.container}>
-        <View style={styles.bordercontent}>
-          <NotificationIcon name="notifications-outline" size={35} color="black" />
-          <Text style={{ fontSize: 20, fontWeight: 'bold', marginLeft: 20 }}>Notifications</Text>
+        {/* Header with Centered Notifications Title and Clear All Button */}
+        <View style={styles.headerContainer}>
+          <View style={styles.header}>
+            <NotificationIcon name="notifications-outline" size={35} color="black" />
+            <Text style={styles.notificationHeaderText}>Notifications</Text>
+          </View>
+          <TouchableOpacity
+            style={[
+              styles.clearAllButton,
+              notifications.length === 0 && { backgroundColor: '#ddd' },
+            ]}
+            onPress={clearAllNotifications}
+            disabled={notifications.length === 0}
+          >
+            <Text
+              style={[
+                styles.clearAllButtonText,
+                notifications.length === 0 && { color: '#aaa' },
+              ]}
+            >
+              Clear All
+            </Text>
+          </TouchableOpacity>
         </View>
 
-        <ScrollView style={styles.notificationsContainer} contentContainerStyle={styles.scrollContent}>
+        {/* Notifications List */}
+        <ScrollView
+          style={styles.notificationsContainer}
+          contentContainerStyle={styles.scrollContent}
+        >
           {notifications.map((notification) => (
             <View
               key={notification.id}
               style={[
                 styles.notificationCard,
-                notification.severity === "High" && styles.notificationHigh,
-                notification.severity === "Medium" && styles.notificationMedium,
-                notification.severity === "Low" && styles.notificationLow,
+                notification.severity === 'High' && styles.notificationHigh,
+                notification.severity === 'Medium' && styles.notificationMedium,
+                notification.severity === 'Low' && styles.notificationLow,
               ]}
             >
               <View style={styles.notificationHeader}>
@@ -64,26 +130,85 @@ export default function NotificationScreen({ navigation }) {
                   <Icon name="close" size={20} color="black" />
                 </TouchableOpacity>
               </View>
-              <Text style={styles.notificationDescription}>{notification.description}</Text>
+              <Text style={styles.notificationDescription}>
+                {notification.description}
+              </Text>
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("ViewDetails", { notification }) // Pass notification data
-                }
+                style={styles.detailsButton}
+                onPress={() => viewDetails(notification)}
               >
-                <Text style={styles.viewDetails}>View Details</Text>
+                <Text style={styles.detailsButtonText}>View Details</Text>
               </TouchableOpacity>
             </View>
           ))}
+          {notifications.length === 0 && (
+            <Text style={styles.placeholderText}>No notifications available.</Text>
+          )}
         </ScrollView>
       </View>
 
-      <TouchableOpacity 
-        style={styles.backButton} 
+      {/* Details Modal */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={detailsModalVisible}
+        onRequestClose={() => setDetailsModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Notification Details</Text>
+            <ScrollView style={{ marginVertical: 10 }}>
+              {selectedNotification?.details?.map((issue, index) => {
+                const latencyExceeded = parseFloat(issue.latency) > 100;
+                const packetLossExceeded = parseFloat(issue.packetLoss) > 5;
+                return (
+                  <View key={index} style={styles.detailCard}>
+                    <Text style={styles.detailText}>
+                      <Text style={styles.detailLabel}>Issue {index + 1}</Text>
+                    </Text>
+                    <Text style={styles.detailText}>
+                      Time: {issue.timestamp}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.detailText,
+                        latencyExceeded && { color: 'red', fontWeight: 'bold' },
+                      ]}
+                    >
+                      Latency: {issue.latency} ms {latencyExceeded && '(Exceeded)'}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.detailText,
+                        packetLossExceeded && { color: 'red', fontWeight: 'bold' },
+                      ]}
+                    >
+                      Packet Loss: {issue.packetLoss}%{' '}
+                      {packetLossExceeded && '(Exceeded)'}
+                    </Text>
+                  </View>
+                );
+              })}
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.closeButton}
+              onPress={() => setDetailsModalVisible(false)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Back Button */}
+      <TouchableOpacity
+        style={styles.backButton}
         onPress={() => navigation.navigate('Home')}
       >
         <Icon name="arrow-back" size={30} color="black" />
       </TouchableOpacity>
 
+      {/* Bottom Navigation */}
       <View style={styles.buttonborder}>
         <TouchableOpacity onPress={() => navigation.navigate('Analytics')}>
           <Icon name="analytics" size={30} color="black" />

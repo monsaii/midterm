@@ -14,6 +14,7 @@ export default StyleSheet.create({
     borderRadius: 50,
     alignSelf: 'center',
     marginTop: 50,
+    
   },
   feedbackBorder: {
     backgroundColor: '#CDF5F8',

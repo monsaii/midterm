@@ -112,6 +112,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'monospace',
   },
+
+  analysisResult: {
+    backgroundColor: '#f9f9f9',
+    padding: 10,
+    marginBottom: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+  },
+  csvText: {
+    fontSize: 14,
+    fontFamily: 'monospace',
+    color: 'black',
+    textAlign: 'left', // Aligns content properly for readability
+    lineHeight: 20, // Adds spacing between rows for better visibility
+  },
 });
 
 export default styles;

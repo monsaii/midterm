@@ -1,3 +1,4 @@
+//*
 import React from 'react';
 import { View, ImageBackground, TouchableOpacity, Text, Dimensions, ScrollView } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -40,41 +41,6 @@ export default function ViewDetails({ route, navigation }) {
           <Text style={styles.title}>{notification.title}</Text>
           <Text style={styles.date}>{notification.date}</Text>
           <Text style={styles.description}>{notification.description}</Text>
-        </View>
-
-        {/* Congestion Analysis Chart */}
-        <View style={styles.chartContainer}>
-          <Text style={styles.chartTitle}>Congestion Analysis</Text>
-          <LineChart
-            data={{
-              labels: ["6am", "7am", "8am", "9am", "10am", "11am", "12pm", "1pm", "2pm", "3pm"],
-              datasets: [
-                {
-                  data: [8, 18, 10, 21, 14, 9, 19, 15, 25, 30], // Replace with actual data
-                  color: (opacity = 1) => `rgba(255, 0, 0, ${opacity})`, // Red line for congestion
-                  strokeWidth: 2,
-                },
-              ],
-            }}
-            width={screenWidth - 50}
-            height={220}
-            chartConfig={{
-              backgroundColor: '#ffffff',
-              backgroundGradientFrom: '#ffffff',
-              backgroundGradientTo: '#ffffff',
-              decimalPlaces: 1,
-              color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-              propsForDots: {
-                r: '4',
-                strokeWidth: '2',
-              },
-            }}
-            style={{
-              marginVertical: 8,
-              borderRadius: 10,
-            }}
-          />
         </View>
 
         {/* Recommendations Section */}

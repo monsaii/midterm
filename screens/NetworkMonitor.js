@@ -17,6 +17,10 @@ const NetworkMonitor = ({ navigation }) => {
     labels: Array(10).fill(''),
     values: Array(10).fill(0),
   });
+  const [bandwidthUtilizationData, setBandwidthUtilizationData] = useState({
+    labels: Array(10).fill(''),
+    values: Array(10).fill(0),
+  });
 
   const [isCapturing, setIsCapturing] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
@@ -30,6 +34,7 @@ const NetworkMonitor = ({ navigation }) => {
         const speed = parseFloat((Math.random() * 100).toFixed(2));
         const latency = parseFloat((Math.random() * 300).toFixed(2));
         const packetLoss = parseFloat((Math.random() * 10).toFixed(2));
+        const bandwidthUtilization = parseFloat((Math.random() * 100).toFixed(2));
 
         setSpeedData((prev) => ({
           labels: [...prev.labels.slice(-9), timestamp],
@@ -42,6 +47,10 @@ const NetworkMonitor = ({ navigation }) => {
         setPacketLossData((prev) => ({
           labels: [...prev.labels.slice(-9), timestamp],
           values: [...prev.values.slice(-9), packetLoss],
+        }));
+        setBandwidthUtilizationData((prev) => ({
+          labels: [...prev.labels.slice(-9), timestamp],
+          values: [...prev.values.slice(-9), bandwidthUtilization],
         }));
       }, 1000);
 
@@ -69,6 +78,7 @@ const NetworkMonitor = ({ navigation }) => {
                     speed: speedData.values[index],
                     latency: latencyData.values[index],
                     packetLoss: packetLossData.values[index],
+                    bandwidthUtilization: bandwidthUtilizationData.values[index],
                   }
                 : null
             )
@@ -85,7 +95,6 @@ const NetworkMonitor = ({ navigation }) => {
   };
 
   const reloadGraphs = () => {
-    // Reset graphs to initial state
     setSpeedData({
       labels: Array(10).fill(''),
       values: Array(10).fill(0),
@@ -95,6 +104,10 @@ const NetworkMonitor = ({ navigation }) => {
       values: Array(10).fill(0),
     });
     setPacketLossData({
+      labels: Array(10).fill(''),
+      values: Array(10).fill(0),
+    });
+    setBandwidthUtilizationData({
       labels: Array(10).fill(''),
       values: Array(10).fill(0),
     });
@@ -110,7 +123,6 @@ const NetworkMonitor = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Network Monitoring</Text>
 
-      {/* Graphs */}
       <View style={styles.chartContainer}>
         <RealTimeGraph data={speedData} title="Wi-Fi Speed (Mbps)" />
       </View>
@@ -120,8 +132,10 @@ const NetworkMonitor = ({ navigation }) => {
       <View style={styles.chartContainer}>
         <RealTimeGraph data={packetLossData} title="Packet Loss (%)" yAxisSuffix=" %" />
       </View>
+      <View style={styles.chartContainer}>
+        <RealTimeGraph data={bandwidthUtilizationData} title="Bandwidth Utilization (%)" yAxisSuffix=" %" />
+      </View>
 
-      {/* Buttons: Start Capturing, Stop Capturing, Reload */}
       <View style={styles.buttonRow}>
         <TouchableOpacity
           style={[styles.button, isCapturing ? styles.stopButton : styles.startButton]}
@@ -148,7 +162,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
     marginVertical: 10,
-    backgroundColor: 'rgba(255, 255, 255, 0.5)',
+    backgroundColor: '#8BFFBA',
     borderRadius: 30,
     marginTop: 20,
     paddingTop: 20,
