@@ -29,8 +29,8 @@ export default function AboutUs({ navigation }) {
           <Image source={require('../assets/user2.png')} style={styles.profileImage} />
           <Text style={styles.profileName}>Karlo Santos</Text>
           <View style={styles.rolesContainer}>
-            <Text style={styles.role}>-System Administration</Text>
-            <Text style={styles.role}>-Development</Text>
+            <Text style={styles.role}>-FrontEnd Development</Text>
+            <Text style={styles.role}>-BackEnd Development</Text>
           </View>
         </View>
 

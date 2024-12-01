@@ -48,8 +48,8 @@ export default StyleSheet.create({
     marginTop: 5,
     alignItems: 'center',
     backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    padding: 2,
-    borderRadius: 10
+    padding: 4,
+    borderRadius: 10,
   },
   role: {
     fontSize: 12,
