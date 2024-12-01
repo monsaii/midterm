@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import RealTimeGraph from './RealTimeGraph';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -37,24 +36,14 @@ const NetworkMonitor = ({ navigation }) => {
   };
 
   const calculateAverages = () => {
-    if (speedBuffer.length === 0 || latencyBuffer.length === 0 || packetLossBuffer.length === 0) {
-      console.error("Buffers are empty; skipping average calculation.");
-      return;
-    }
+    if (speedBuffer.length === 0 || latencyBuffer.length === 0 || packetLossBuffer.length === 0) return;
 
     const timestamp = new Date().toLocaleTimeString();
 
-    const speedAvg = speedBuffer.length
-      ? parseFloat((speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length).toFixed(2))
-      : 0;
-    const latencyAvg = latencyBuffer.length
-      ? parseFloat((latencyBuffer.reduce((a, b) => a + b, 0) / latencyBuffer.length).toFixed(2))
-      : 0;
-    const packetLossAvg = packetLossBuffer.length
-      ? parseFloat((packetLossBuffer.reduce((a, b) => a + b, 0) / packetLossBuffer.length).toFixed(2))
-      : 0;
+    const speedAvg = parseFloat((speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length).toFixed(2));
+    const latencyAvg = parseFloat((latencyBuffer.reduce((a, b) => a + b, 0) / latencyBuffer.length).toFixed(2));
+    const packetLossAvg = parseFloat((packetLossBuffer.reduce((a, b) => a + b, 0) / packetLossBuffer.length).toFixed(2));
 
-    // Update graph data
     setSpeedData((prev) => ({
       labels: [...prev.labels.slice(-9), timestamp],
       values: [...prev.values.slice(-9), speedAvg],
@@ -92,6 +81,21 @@ const NetworkMonitor = ({ navigation }) => {
     }
   };
 
+  const reloadGraphs = () => {
+    setSpeedData({
+      labels: Array(10).fill(''),
+      values: Array(10).fill(0),
+    });
+    setLatencyData({
+      labels: Array(10).fill(''),
+      values: Array(10).fill(0),
+    });
+    setPacketLossData({
+      labels: Array(10).fill(''),
+      values: Array(10).fill(0),
+    });
+  };
+
   useEffect(() => {
     return () => {
       if (intervalId) {
@@ -121,6 +125,9 @@ const NetworkMonitor = ({ navigation }) => {
           onPress={isCapturing ? stopCapturing : startCapturing}
         >
           <Text style={styles.buttonText}>{isCapturing ? 'Stop Capturing' : 'Start Capturing'}</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.button, styles.reloadButton]} onPress={reloadGraphs}>
+          <Icon name="refresh" size={24} color="#fff" />
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -164,6 +171,9 @@ const styles = StyleSheet.create({
   },
   stopButton: {
     backgroundColor: '#dc3545',
+  },
+  reloadButton: {
+    backgroundColor: '#007bff',
   },
   buttonText: {
     color: '#fff',
