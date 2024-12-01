@@ -2,13 +2,22 @@ import React from 'react';
 import { Dimensions, View, Text, ScrollView, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
-const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps" }) => {
+const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps", thresholds = {} }) => {
   const screenWidth = Dimensions.get('window').width;
 
   // Filter labels to show only every alternate label for better readability
   const labelsToShow = data.labels.map((label, index) =>
     index % 2 === 0 ? label : ''
   );
+
+  // Determine colors for the graph dynamically based on thresholds
+  const datasetColor = data.values.some((value) => {
+    if (thresholds.max !== undefined && value > thresholds.max) return true;
+    if (thresholds.min !== undefined && value < thresholds.min) return true;
+    return false;
+  })
+    ? 'rgba(255, 99, 132, 1)' // Exceeded: Red
+    : 'rgba(0, 99, 132, 1)'; // Normal: Default Blue/Gray
 
   return (
     <View style={styles.container}>
@@ -35,7 +44,7 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps" }) => {
             backgroundGradientFrom: '#eff3ff',
             backgroundGradientTo: '#efefef',
             decimalPlaces: 2, // Number of decimal places for values
-            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Line and text color
+            color: () => datasetColor, // Line color based on conditions
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Label color
             propsForHorizontalLabels: {
               fontSize: 9, // Horizontal label font size
@@ -46,7 +55,7 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps" }) => {
             propsForDots: {
               r: '6', // Dot size
               strokeWidth: '2', // Dot stroke width
-              stroke: '#ffa726', // Dot color
+              stroke: datasetColor, // Dot stroke color based on thresholds
             },
           }}
           style={{
@@ -72,7 +81,7 @@ const styles = StyleSheet.create({
     textAlign: 'center', // Centered title
   },
   scrollContainer: {
-    paddingHorizontal: 10, 
+    paddingHorizontal: 10,
   },
 });
 

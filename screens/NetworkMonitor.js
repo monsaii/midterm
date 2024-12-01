@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RealTimeGraph from './RealTimeGraph'; // Ensure RealTimeGraph exists and is correctly implemented
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -17,10 +17,6 @@ const NetworkMonitor = ({ navigation }) => {
     labels: Array(10).fill(''),
     values: Array(10).fill(0),
   });
-  const [bandwidthUtilizationData, setBandwidthUtilizationData] = useState({
-    labels: Array(10).fill(''),
-    values: Array(10).fill(0),
-  });
 
   const [isCapturing, setIsCapturing] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
@@ -32,7 +28,6 @@ const NetworkMonitor = ({ navigation }) => {
     const speed = parseFloat((Math.random() * 100).toFixed(2)); // Random Wi-Fi speed
     const latency = parseFloat((Math.random() * 300).toFixed(2)); // Random latency
     const packetLoss = parseFloat((Math.random() * 10).toFixed(2)); // Random packet loss
-    const bandwidthUtilization = parseFloat((Math.random() * 100).toFixed(2)); // Random bandwidth utilization
 
     // Update the graph data with new points
     setSpeedData((prev) => ({
@@ -47,33 +42,6 @@ const NetworkMonitor = ({ navigation }) => {
       labels: [...prev.labels.slice(-9), timestamp],
       values: [...prev.values.slice(-9), packetLoss],
     }));
-    setBandwidthUtilizationData((prev) => ({
-      labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), bandwidthUtilization],
-    }));
-
-    // Check for threshold breaches and raise alerts
-    if (latency > 250 || packetLoss > 9) {
-      const severity = latency > 200 ? 'High' : 'Medium';
-      const notification = {
-        id: Date.now().toString(),
-        title: 'Threshold Alert',
-        description: `Latency: ${latency.toFixed(2)} ms, Packet Loss: ${packetLoss.toFixed(2)}%`,
-        date: timestamp,
-        severity,
-      };
-
-      try {
-        const existingNotifications = await AsyncStorage.getItem('notifications');
-        const updatedNotifications = existingNotifications
-          ? [...JSON.parse(existingNotifications), notification]
-          : [notification];
-        await AsyncStorage.setItem('notifications', JSON.stringify(updatedNotifications));
-        Alert.alert('Alert', notification.description);
-      } catch (error) {
-        console.error('Error saving notification:', error);
-      }
-    }
   };
 
   // Start capturing data
@@ -106,7 +74,6 @@ const NetworkMonitor = ({ navigation }) => {
                     speed: speedData.values[index],
                     latency: latencyData.values[index],
                     packetLoss: packetLossData.values[index],
-                    bandwidthUtilization: bandwidthUtilizationData.values[index],
                   }
                 : null
             )
@@ -114,10 +81,8 @@ const NetworkMonitor = ({ navigation }) => {
         ];
 
         await AsyncStorage.setItem('historicalData', JSON.stringify(updatedData));
-        Alert.alert('Data Saved', 'Captured data has been saved.');
       } catch (error) {
-        Alert.alert('Error', 'Failed to save captured data.');
-        console.error(error);
+        console.error('Failed to save captured data.', error);
       }
     }
   };
@@ -135,10 +100,6 @@ const NetworkMonitor = ({ navigation }) => {
       labels: Array(10).fill(''),
       values: Array(10).fill(0),
     });
-    setBandwidthUtilizationData({
-      labels: Array(10).fill(''),
-      values: Array(10).fill(0),
-    });
   };
 
   useEffect(() => {
@@ -152,16 +113,27 @@ const NetworkMonitor = ({ navigation }) => {
       <Text style={styles.title}>Network Monitoring</Text>
 
       <View style={styles.chartContainer}>
-        <RealTimeGraph data={speedData} title="Wi-Fi Speed (Mbps)" />
+        <RealTimeGraph
+          data={speedData}
+          title="Wi-Fi Speed (Mbps)"
+          yAxisSuffix=" Mbps"
+        />
       </View>
       <View style={styles.chartContainer}>
-        <RealTimeGraph data={latencyData} title="Latency (ms)" yAxisSuffix=" ms" />
+        <RealTimeGraph
+          data={latencyData}
+          title="Latency (ms)"
+          yAxisSuffix=" ms"
+          thresholds={{ max: 250 }} // Latency threshold
+        />
       </View>
       <View style={styles.chartContainer}>
-        <RealTimeGraph data={packetLossData} title="Packet Loss (%)" yAxisSuffix=" %" />
-      </View>
-      <View style={styles.chartContainer}>
-        <RealTimeGraph data={bandwidthUtilizationData} title="Bandwidth Utilization (%)" yAxisSuffix=" %" />
+        <RealTimeGraph
+          data={packetLossData}
+          title="Packet Loss (%)"
+          yAxisSuffix=" %"
+          thresholds={{ max: 9 }} // Packet loss threshold
+        />
       </View>
 
       <View style={styles.buttonRow}>
