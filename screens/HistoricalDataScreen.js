@@ -49,11 +49,11 @@ const HistoricalDataScreen = ({ navigation }) => {
     }
 
     const headers =
-      'Timestamp,Speed (Mbps),Latency (ms),Packet Loss (%),Bandwidth Utilization (%)\n';
+      'Timestamp,Speed (Mbps),Latency (ms),Packet Loss (%)\n';
     const rows = historicalData
       .map(
         (item) =>
-          `${item.timestamp},${item.speed},${item.latency},${item.packetLoss},${item.bandwidthUtilization}`
+          `${item.timestamp},${item.speed},${item.latency},${item.packetLoss}`
       )
       .join('\n');
     const csvContent = headers + rows;
@@ -138,7 +138,7 @@ const HistoricalDataScreen = ({ navigation }) => {
   const analyzeFile = async (content) => {
     const rows = content.split('\n').slice(1); // Skip header
     const issues = rows.filter((row) => {
-      const [timestamp, speed, latency, packetLoss, bandwidthUtilization] = row.split(',');
+      const [timestamp, speed, latency, packetLoss,] = row.split(',');
       return parseFloat(latency) > 100 || parseFloat(packetLoss) > 5;
     });
 
@@ -147,14 +147,13 @@ const HistoricalDataScreen = ({ navigation }) => {
       title: `Analysis Complete: ${issues.length} Issues Found`,
       description: `Found ${issues.length} issues during analysis.`,
       details: issues.map((row, index) => {
-        const [timestamp, speed, latency, packetLoss, bandwidthUtilization] = row.split(',');
+        const [timestamp, speed, latency, packetLoss] = row.split(',');
         return {
           id: `${Date.now()}_${index}`,
           timestamp,
           speed,
           latency,
           packetLoss,
-          bandwidthUtilization,
         };
       }),
       date: new Date().toLocaleString(),
@@ -213,9 +212,6 @@ const HistoricalDataScreen = ({ navigation }) => {
                 <Text style={{ fontSize: 15 }}>Speed: {item.speed} Mbps</Text>
                 <Text style={{ fontSize: 15 }}>Latency: {item.latency} ms</Text>
                 <Text style={{ fontSize: 15 }}>Packet Loss: {item.packetLoss} %</Text>
-                <Text style={{ fontSize: 15 }}>
-                  Bandwidth Utilization: {item.bandwidthUtilization} %
-                </Text>
               </View>
             </View>
           )}
