@@ -1,10 +1,24 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground, Image, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ImageBackground,
+  Image,
+  Alert,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import styles from './loginstyle';
 import { useNavigation } from '@react-navigation/native';
-import { signInWithEmailAndPassword, createUserWithEmailAndPassword, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithCredential,
+} from 'firebase/auth';
+import { auth, db } from '../firebaseConfig';
+import { doc, setDoc } from 'firebase/firestore'; // Firestore functions
 import * as Google from 'expo-auth-session/providers/google';
 
 export default function LoginScreen() {
@@ -12,11 +26,27 @@ export default function LoginScreen() {
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const [isSignUpMode, setIsSignUpMode] = useState(false); // Toggle between Sign-In and Sign-Up modes
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
 
   const [request, response, promptAsync] = Google.useAuthRequest({
-    clientId: "765445786482-rlnji9222456ksum7miclc71n3a1k0vq.apps.googleusercontent.com", // Replace with your actual Web Client ID
+    clientId:
+      '765445786482-rlnji9222456ksum7miclc71n3a1k0vq.apps.googleusercontent.com',
   });
+
+  // Save user data to Firestore
+  const saveUserToFirestore = async (user) => {
+    try {
+      await setDoc(doc(db, 'users', user.uid), {
+        email: user.email,
+        uid: user.uid,
+        provider: user.providerId,
+      });
+      console.log('User data saved to Firestore');
+    } catch (error) {
+      console.error('Error saving user to Firestore:', error);
+      Alert.alert('Error', 'Failed to save user data.');
+    }
+  };
 
   const handleSignUp = async () => {
     if (!login || !password) {
@@ -27,6 +57,7 @@ export default function LoginScreen() {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, login, password);
       console.log('User signed up:', userCredential.user);
+      await saveUserToFirestore(userCredential.user);
       Alert.alert('Success', 'Account created successfully!');
       setIsSignUpMode(false); // Switch back to Sign-In mode after sign-up
     } catch (error) {
@@ -60,6 +91,7 @@ export default function LoginScreen() {
         const credential = GoogleAuthProvider.credential(id_token);
         const userCredential = await signInWithCredential(auth, credential);
         console.log('User signed in with Google:', userCredential.user);
+        await saveUserToFirestore(userCredential.user);
         Alert.alert('Success', 'Logged in with Google!');
         navigation.navigate('Home');
       }
@@ -70,16 +102,13 @@ export default function LoginScreen() {
   };
 
   return (
-    <ImageBackground 
-      source={require('../assets/monitoring.png')} 
+    <ImageBackground
+      source={require('../assets/monitoring.png')}
       style={styles.image}
       resizeMode="cover"
     >
       <View style={styles.logoBackground}>
-        <Image 
-          source={require('../assets/logo(1).png')} 
-          style={styles.logo}
-        />
+        <Image source={require('../assets/logo(1).png')} style={styles.logo} />
       </View>
 
       <View style={styles.container}>
@@ -105,27 +134,25 @@ export default function LoginScreen() {
             secureTextEntry={!isPasswordVisible}
           />
           <TouchableOpacity onPress={() => setIsPasswordVisible(!isPasswordVisible)}>
-            <Icon 
-              name={isPasswordVisible ? "visibility" : "visibility-off"} 
-              size={24} 
-              color="gray" 
+            <Icon
+              name={isPasswordVisible ? 'visibility' : 'visibility-off'}
+              size={24}
+              color="gray"
             />
           </TouchableOpacity>
         </View>
 
         {/* Sign In / Sign Up Button */}
-        <TouchableOpacity 
-          style={styles.signInButton} 
+        <TouchableOpacity
+          style={styles.signInButton}
           onPress={isSignUpMode ? handleSignUp : handleSignIn}
         >
-          <Text style={styles.signInText}>
-            {isSignUpMode ? 'Sign Up' : 'Sign In'}
-          </Text>
+          <Text style={styles.signInText}>{isSignUpMode ? 'Sign Up' : 'Sign In'}</Text>
         </TouchableOpacity>
 
         {/* Google Sign In Button */}
-        <TouchableOpacity 
-          style={styles.googleButton} 
+        <TouchableOpacity
+          style={styles.googleButton}
           onPress={handleGoogleSignIn}
           disabled={!request}
         >
@@ -138,9 +165,7 @@ export default function LoginScreen() {
             {isSignUpMode ? 'Already have an account?' : "Don't have an account?"}
           </Text>
           <TouchableOpacity onPress={() => setIsSignUpMode(!isSignUpMode)}>
-            <Text style={styles.signupLink}>
-              {isSignUpMode ? ' Sign In' : ' Sign Up'}
-            </Text>
+            <Text style={styles.signupLink}>{isSignUpMode ? ' Sign In' : ' Sign Up'}</Text>
           </TouchableOpacity>
         </View>
       </View>
