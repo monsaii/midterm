@@ -26,7 +26,7 @@ const NetworkMonitor = ({ navigation }) => {
   const [intervalId, setIntervalId] = useState(null);
 
   // Simulate network data collection
-  const collectNetworkData = () => {
+  const collectNetworkData = async () => {
     const timestamp = new Date().toLocaleTimeString();
 
     const speed = parseFloat((Math.random() * 100).toFixed(2)); // Random Wi-Fi speed
@@ -51,6 +51,29 @@ const NetworkMonitor = ({ navigation }) => {
       labels: [...prev.labels.slice(-9), timestamp],
       values: [...prev.values.slice(-9), bandwidthUtilization],
     }));
+
+    // Check for threshold breaches and raise alerts
+    if (latency > 250 || packetLoss > 9) {
+      const severity = latency > 200 ? 'High' : 'Medium';
+      const notification = {
+        id: Date.now().toString(),
+        title: 'Threshold Alert',
+        description: `Latency: ${latency.toFixed(2)} ms, Packet Loss: ${packetLoss.toFixed(2)}%`,
+        date: timestamp,
+        severity,
+      };
+
+      try {
+        const existingNotifications = await AsyncStorage.getItem('notifications');
+        const updatedNotifications = existingNotifications
+          ? [...JSON.parse(existingNotifications), notification]
+          : [notification];
+        await AsyncStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+        Alert.alert('Alert', notification.description);
+      } catch (error) {
+        console.error('Error saving notification:', error);
+      }
+    }
   };
 
   // Start capturing data
