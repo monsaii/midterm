@@ -36,19 +36,28 @@ const NetworkMonitor = ({ navigation }) => {
     if (isFinite(packetLoss)) packetLossBuffer.push(packetLoss);
   };
 
-  const saveHistoricalData = async (averagedData) => {
-    try {
-      const existingData = await AsyncStorage.getItem('historicalData');
-      const historicalData = existingData ? JSON.parse(existingData) : [];
+  const saveNotification = async (title, description, severity) => {
+    const timestamp = new Date().toLocaleTimeString();
+    const notification = {
+      id: Date.now().toString(),
+      title,
+      description,
+      date: timestamp,
+      severity,
+    };
 
-      const updatedData = [...historicalData, averagedData];
-      await AsyncStorage.setItem('historicalData', JSON.stringify(updatedData));
+    try {
+      const existingNotifications = await AsyncStorage.getItem('notifications');
+      const updatedNotifications = existingNotifications
+        ? [...JSON.parse(existingNotifications), notification]
+        : [notification];
+      await AsyncStorage.setItem('notifications', JSON.stringify(updatedNotifications));
     } catch (error) {
-      console.error('Failed to save historical data:', error);
+      console.error('Failed to save notification:', error);
     }
   };
 
-  const calculateAverages = () => {
+  const calculateAverages = async () => {
     if (speedBuffer.length === 0 || latencyBuffer.length === 0 || packetLossBuffer.length === 0) return;
 
     const timestamp = new Date().toLocaleTimeString();
@@ -59,6 +68,15 @@ const NetworkMonitor = ({ navigation }) => {
       latency: parseFloat((latencyBuffer.reduce((a, b) => a + b, 0) / latencyBuffer.length).toFixed(2)),
       packetLoss: parseFloat((packetLossBuffer.reduce((a, b) => a + b, 0) / packetLossBuffer.length).toFixed(2)),
     };
+
+    // Check thresholds and create notifications
+    if (averagedData.latency > 155) {
+      await saveNotification("Alert", `Latency: ${averagedData.latency} ms exceeded threshold`, "High");
+    }
+
+    if (averagedData.packetLoss > 6) {
+      await saveNotification("Alert", `Packet Loss: ${averagedData.packetLoss}% exceeded threshold`, "Medium");
+    }
 
     // Update graph data
     setSpeedData((prev) => ({
@@ -75,12 +93,24 @@ const NetworkMonitor = ({ navigation }) => {
     }));
 
     // Save to historical data
-    saveHistoricalData(averagedData);
+    await saveHistoricalData(averagedData);
 
     // Clear buffers
     speedBuffer.length = 0;
     latencyBuffer.length = 0;
     packetLossBuffer.length = 0;
+  };
+
+  const saveHistoricalData = async (averagedData) => {
+    try {
+      const existingData = await AsyncStorage.getItem('historicalData');
+      const historicalData = existingData ? JSON.parse(existingData) : [];
+
+      const updatedData = [...historicalData, averagedData];
+      await AsyncStorage.setItem('historicalData', JSON.stringify(updatedData));
+    } catch (error) {
+      console.error('Failed to save historical data:', error);
+    }
   };
 
   const startCapturing = () => {
