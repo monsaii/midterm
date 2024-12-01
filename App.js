@@ -22,7 +22,6 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        {/* Screens from the original app */}
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomePage} />
         <Stack.Screen name="Analytics" component={HistoricalDataScreen} />

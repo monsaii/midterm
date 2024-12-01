@@ -1,17 +1,73 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { auth } from '../firebaseConfig'; // Import Firebase auth instance
+import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import styles from './editProfileStyle';
+
+const db = getFirestore(); // Firestore instance
 
 export default function EditProfile({ navigation }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [phone, setPhone] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleProfileUpdate = () => {
-    alert("Profile updated successfully!");
-    // Add actual profile update logic here
+  const fetchUserProfile = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        Alert.alert('Error', 'No user is logged in.');
+        return;
+      }
+
+      const userDoc = doc(db, 'users', user.uid);
+      const userSnapshot = await getDoc(userDoc);
+
+      if (userSnapshot.exists()) {
+        const userData = userSnapshot.data();
+        setName(userData.name || '');
+        setEmail(userData.email || user.email || '');
+        setPhone(userData.phone || '');
+      } else {
+        Alert.alert('Error', 'User profile not found.');
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      Alert.alert('Error', 'Unable to fetch user profile.');
+    }
   };
+
+  const handleProfileUpdate = async () => {
+    if (!name || !email || !phone) {
+      Alert.alert('Error', 'All fields are required.');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        Alert.alert('Error', 'No user is logged in.');
+        return;
+      }
+
+      const userDoc = doc(db, 'users', user.uid);
+      await updateDoc(userDoc, { name, email, phone });
+
+      Alert.alert('Success', 'Profile updated successfully!');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      Alert.alert('Error', 'Failed to update profile.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, []);
 
   return (
     <ImageBackground 
@@ -43,8 +99,12 @@ export default function EditProfile({ navigation }) {
           onChangeText={setPhone}
         />
 
-        <TouchableOpacity style={styles.button} onPress={handleProfileUpdate}>
-          <Text style={styles.buttonText}>Save Changes</Text>
+        <TouchableOpacity 
+          style={styles.button} 
+          onPress={handleProfileUpdate}
+          disabled={loading}
+        >
+          <Text style={styles.buttonText}>{loading ? 'Saving...' : 'Save Changes'}</Text>
         </TouchableOpacity>
       </View>
 

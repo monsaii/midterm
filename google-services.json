@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "765445786482",
+    "project_id": "network-t9",
+    "storage_bucket": "network-t9.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765445786482:android:fbef0bd96232b91fad2beb",
+        "android_client_info": {
+          "package_name": "com.midterm"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765445786482-2mde12n146n2icfq6f32d39bupjplk90.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.midterm",
+            "certificate_hash": "9e19159c8742f6d8328b3c11297c9cc082460386"
+          }
+        },
+        {
+          "client_id": "765445786482-rlnji9222456ksum7miclc71n3a1k0vq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhsTtLom3BqB8tFTnfNvpoJLzzflRvgcU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "765445786482-rlnji9222456ksum7miclc71n3a1k0vq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

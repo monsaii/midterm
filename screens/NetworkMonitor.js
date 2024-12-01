@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RealTimeGraph from './RealTimeGraph';
+import RealTimeGraph from './RealTimeGraph'; // Ensure RealTimeGraph exists and is correctly implemented
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const NetworkMonitor = ({ navigation }) => {
@@ -25,39 +25,44 @@ const NetworkMonitor = ({ navigation }) => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
 
+  // Simulate network data collection
+  const collectNetworkData = () => {
+    const timestamp = new Date().toLocaleTimeString();
+
+    const speed = parseFloat((Math.random() * 100).toFixed(2)); // Random Wi-Fi speed
+    const latency = parseFloat((Math.random() * 300).toFixed(2)); // Random latency
+    const packetLoss = parseFloat((Math.random() * 10).toFixed(2)); // Random packet loss
+    const bandwidthUtilization = parseFloat((Math.random() * 100).toFixed(2)); // Random bandwidth utilization
+
+    // Update the graph data with new points
+    setSpeedData((prev) => ({
+      labels: [...prev.labels.slice(-9), timestamp],
+      values: [...prev.values.slice(-9), speed],
+    }));
+    setLatencyData((prev) => ({
+      labels: [...prev.labels.slice(-9), timestamp],
+      values: [...prev.values.slice(-9), latency],
+    }));
+    setPacketLossData((prev) => ({
+      labels: [...prev.labels.slice(-9), timestamp],
+      values: [...prev.values.slice(-9), packetLoss],
+    }));
+    setBandwidthUtilizationData((prev) => ({
+      labels: [...prev.labels.slice(-9), timestamp],
+      values: [...prev.values.slice(-9), bandwidthUtilization],
+    }));
+  };
+
+  // Start capturing data
   const startCapturing = () => {
     if (!isCapturing) {
       setIsCapturing(true);
-      const id = setInterval(() => {
-        const timestamp = new Date().toLocaleTimeString();
-
-        const speed = parseFloat((Math.random() * 100).toFixed(2));
-        const latency = parseFloat((Math.random() * 300).toFixed(2));
-        const packetLoss = parseFloat((Math.random() * 10).toFixed(2));
-        const bandwidthUtilization = parseFloat((Math.random() * 100).toFixed(2));
-
-        setSpeedData((prev) => ({
-          labels: [...prev.labels.slice(-9), timestamp],
-          values: [...prev.values.slice(-9), speed],
-        }));
-        setLatencyData((prev) => ({
-          labels: [...prev.labels.slice(-9), timestamp],
-          values: [...prev.values.slice(-9), latency],
-        }));
-        setPacketLossData((prev) => ({
-          labels: [...prev.labels.slice(-9), timestamp],
-          values: [...prev.values.slice(-9), packetLoss],
-        }));
-        setBandwidthUtilizationData((prev) => ({
-          labels: [...prev.labels.slice(-9), timestamp],
-          values: [...prev.values.slice(-9), bandwidthUtilization],
-        }));
-      }, 1000);
-
+      const id = setInterval(collectNetworkData, 1000); // Collect data every second
       setIntervalId(id);
     }
   };
 
+  // Stop capturing and save data locally
   const stopCapturing = async () => {
     if (isCapturing) {
       setIsCapturing(false);
@@ -165,12 +170,12 @@ const styles = StyleSheet.create({
     backgroundColor: '#8BFFBA',
     borderRadius: 30,
     marginTop: 20,
-    paddingTop: 20,
-    paddingBottom: 20,
+    paddingVertical: 20,
     marginHorizontal: 40,
   },
   chartContainer: {
     borderRadius: 12,
+    marginVertical: 10,
   },
   buttonRow: {
     flexDirection: 'row',

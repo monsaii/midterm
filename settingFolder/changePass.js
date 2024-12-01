@@ -1,20 +1,53 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { reauthenticateWithCredential, EmailAuthProvider, updatePassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig'; // Import Firebase auth instance
 import styles from './changePassStyle';
 
-export default function ChangePass({ navigation }) { // Corrected the name here
+export default function ChangePass({ navigation }) {
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handlePasswordChange = () => {
-    if (newPassword !== confirmPassword) {
-      alert("New password and confirm password do not match!");
+  const handlePasswordChange = async () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      Alert.alert('Error', 'All fields are required!');
       return;
     }
-    alert("Password changed successfully!");
-    // Add actual password change logic here
+
+    if (newPassword !== confirmPassword) {
+      Alert.alert('Error', 'New password and confirm password do not match!');
+      return;
+    }
+
+    try {
+      // Reauthenticate the user
+      const user = auth.currentUser;
+
+      if (!user) {
+        Alert.alert('Error', 'No user is logged in.');
+        return;
+      }
+
+      const credential = EmailAuthProvider.credential(user.email, currentPassword);
+      await reauthenticateWithCredential(user, credential);
+
+      // Update the password
+      await updatePassword(user, newPassword);
+
+      Alert.alert('Success', 'Password changed successfully!');
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error changing password:', error);
+      let errorMessage = 'An error occurred. Please try again.';
+      if (error.code === 'auth/wrong-password') {
+        errorMessage = 'The current password is incorrect.';
+      } else if (error.code === 'auth/weak-password') {
+        errorMessage = 'The new password is too weak.';
+      }
+      Alert.alert('Error', errorMessage);
+    }
   };
 
   return (
@@ -41,7 +74,7 @@ export default function ChangePass({ navigation }) { // Corrected the name here
         />
         <TextInput
           style={styles.input}
-          placeholder="Confirm Password"
+          placeholder="Confirm New Password"
           secureTextEntry
           value={confirmPassword}
           onChangeText={setConfirmPassword}
