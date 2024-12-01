@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RealTimeGraph from './RealTimeGraph'; // Ensure RealTimeGraph exists and is correctly implemented
+import RealTimeGraph from './RealTimeGraph';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const NetworkMonitor = ({ navigation }) => {
@@ -21,90 +21,83 @@ const NetworkMonitor = ({ navigation }) => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
 
-  // Simulate network data collection
-  const collectNetworkData = async () => {
+  // Buffers for per-minute averaging
+  const speedBuffer = [];
+  const latencyBuffer = [];
+  const packetLossBuffer = [];
+
+  const collectNetworkData = () => {
+    const speed = parseFloat((Math.random() * 100).toFixed(2));
+    const latency = parseFloat((Math.random() * 300).toFixed(2));
+    const packetLoss = parseFloat((Math.random() * 10).toFixed(2));
+
+    if (isFinite(speed)) speedBuffer.push(speed);
+    if (isFinite(latency)) latencyBuffer.push(latency);
+    if (isFinite(packetLoss)) packetLossBuffer.push(packetLoss);
+  };
+
+  const calculateAverages = () => {
+    if (speedBuffer.length === 0 || latencyBuffer.length === 0 || packetLossBuffer.length === 0) {
+      console.error("Buffers are empty; skipping average calculation.");
+      return;
+    }
+
     const timestamp = new Date().toLocaleTimeString();
 
-    const speed = parseFloat((Math.random() * 100).toFixed(2)); // Random Wi-Fi speed
-    const latency = parseFloat((Math.random() * 300).toFixed(2)); // Random latency
-    const packetLoss = parseFloat((Math.random() * 10).toFixed(2)); // Random packet loss
+    const speedAvg = speedBuffer.length
+      ? parseFloat((speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length).toFixed(2))
+      : 0;
+    const latencyAvg = latencyBuffer.length
+      ? parseFloat((latencyBuffer.reduce((a, b) => a + b, 0) / latencyBuffer.length).toFixed(2))
+      : 0;
+    const packetLossAvg = packetLossBuffer.length
+      ? parseFloat((packetLossBuffer.reduce((a, b) => a + b, 0) / packetLossBuffer.length).toFixed(2))
+      : 0;
 
-    // Update the graph data with new points
+    // Update graph data
     setSpeedData((prev) => ({
       labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), speed],
+      values: [...prev.values.slice(-9), speedAvg],
     }));
     setLatencyData((prev) => ({
       labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), latency],
+      values: [...prev.values.slice(-9), latencyAvg],
     }));
     setPacketLossData((prev) => ({
       labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), packetLoss],
+      values: [...prev.values.slice(-9), packetLossAvg],
     }));
+
+    // Clear buffers
+    speedBuffer.length = 0;
+    latencyBuffer.length = 0;
+    packetLossBuffer.length = 0;
   };
 
-  // Start capturing data
   const startCapturing = () => {
     if (!isCapturing) {
       setIsCapturing(true);
-      const id = setInterval(collectNetworkData, 1000); // Collect data every second
-      setIntervalId(id);
+      const dataCollectionInterval = setInterval(collectNetworkData, 1000); // Collect every second
+      const averageCalculationInterval = setInterval(calculateAverages, 60000); // Calculate averages every minute
+      setIntervalId({ dataCollectionInterval, averageCalculationInterval });
     }
   };
 
-  // Stop capturing and save data locally
-  const stopCapturing = async () => {
+  const stopCapturing = () => {
     if (isCapturing) {
       setIsCapturing(false);
-      clearInterval(intervalId);
+      clearInterval(intervalId.dataCollectionInterval);
+      clearInterval(intervalId.averageCalculationInterval);
       setIntervalId(null);
-
-      try {
-        const existingData = await AsyncStorage.getItem('historicalData');
-        const historicalData = existingData ? JSON.parse(existingData) : [];
-
-        const updatedData = [
-          ...historicalData,
-          ...speedData.labels
-            .map((label, index) =>
-              label
-                ? {
-                    timestamp: label,
-                    speed: speedData.values[index],
-                    latency: latencyData.values[index],
-                    packetLoss: packetLossData.values[index],
-                  }
-                : null
-            )
-            .filter(Boolean),
-        ];
-
-        await AsyncStorage.setItem('historicalData', JSON.stringify(updatedData));
-      } catch (error) {
-        console.error('Failed to save captured data.', error);
-      }
     }
-  };
-
-  const reloadGraphs = () => {
-    setSpeedData({
-      labels: Array(10).fill(''),
-      values: Array(10).fill(0),
-    });
-    setLatencyData({
-      labels: Array(10).fill(''),
-      values: Array(10).fill(0),
-    });
-    setPacketLossData({
-      labels: Array(10).fill(''),
-      values: Array(10).fill(0),
-    });
   };
 
   useEffect(() => {
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      if (intervalId) {
+        clearInterval(intervalId.dataCollectionInterval);
+        clearInterval(intervalId.averageCalculationInterval);
+      }
     };
   }, [intervalId]);
 
@@ -113,27 +106,13 @@ const NetworkMonitor = ({ navigation }) => {
       <Text style={styles.title}>Network Monitoring</Text>
 
       <View style={styles.chartContainer}>
-        <RealTimeGraph
-          data={speedData}
-          title="Wi-Fi Speed (Mbps)"
-          yAxisSuffix=" Mbps"
-        />
+        <RealTimeGraph data={speedData} title="Wi-Fi Speed (Mbps)" yAxisSuffix=" Mbps" />
       </View>
       <View style={styles.chartContainer}>
-        <RealTimeGraph
-          data={latencyData}
-          title="Latency (ms)"
-          yAxisSuffix=" ms"
-          thresholds={{ max: 250 }} // Latency threshold
-        />
+        <RealTimeGraph data={latencyData} title="Latency (ms)" yAxisSuffix=" ms" threshold={250} />
       </View>
       <View style={styles.chartContainer}>
-        <RealTimeGraph
-          data={packetLossData}
-          title="Packet Loss (%)"
-          yAxisSuffix=" %"
-          thresholds={{ max: 9 }} // Packet loss threshold
-        />
+        <RealTimeGraph data={packetLossData} title="Packet Loss (%)" yAxisSuffix=" %" threshold={9} />
       </View>
 
       <View style={styles.buttonRow}>
@@ -141,12 +120,7 @@ const NetworkMonitor = ({ navigation }) => {
           style={[styles.button, isCapturing ? styles.stopButton : styles.startButton]}
           onPress={isCapturing ? stopCapturing : startCapturing}
         >
-          <Text style={styles.buttonText}>
-            {isCapturing ? 'Stop Capturing' : 'Start Capturing'}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={[styles.button, styles.reloadButton]} onPress={reloadGraphs}>
-          <Icon name="refresh" size={24} color="#fff" />
+          <Text style={styles.buttonText}>{isCapturing ? 'Stop Capturing' : 'Start Capturing'}</Text>
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -190,9 +164,6 @@ const styles = StyleSheet.create({
   },
   stopButton: {
     backgroundColor: '#dc3545',
-  },
-  reloadButton: {
-    backgroundColor: '#007bff',
   },
   buttonText: {
     color: '#fff',

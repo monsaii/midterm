@@ -2,22 +2,21 @@ import React from 'react';
 import { Dimensions, View, Text, ScrollView, StyleSheet } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 
-const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps", thresholds = {} }) => {
+const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps", threshold = null }) => {
   const screenWidth = Dimensions.get('window').width;
 
-  // Filter labels to show only every alternate label for better readability
+  // Calculate dynamic width based on the number of data points
+  const chartWidth = Math.max(data.labels.length * 60, screenWidth);
+
+  // Filter labels to show every other label (to avoid overcrowding)
   const labelsToShow = data.labels.map((label, index) =>
     index % 2 === 0 ? label : ''
   );
 
-  // Determine colors for the graph dynamically based on thresholds
-  const datasetColor = data.values.some((value) => {
-    if (thresholds.max !== undefined && value > thresholds.max) return true;
-    if (thresholds.min !== undefined && value < thresholds.min) return true;
-    return false;
-  })
-    ? 'rgba(255, 99, 132, 1)' // Exceeded: Red
-    : 'rgba(0, 99, 132, 1)'; // Normal: Default Blue/Gray
+  // Determine graph color based on threshold
+  const datasetColor = data.values.some((value) => threshold && value > threshold)
+    ? 'rgba(255, 99, 132, 1)' // Exceeded threshold (Red)
+    : 'rgba(0, 99, 132, 1)'; // Normal (Blue)
 
   return (
     <View style={styles.container}>
@@ -33,10 +32,10 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps", thresholds = {} }) 
         {/* LineChart with dynamic width for horizontal scrolling */}
         <LineChart
           data={{
-            labels: labelsToShow.slice(0, data.values.length), // Limit labels to data length
-            datasets: [{ data: data.values }], // Pass data values to the chart
+            labels: labelsToShow, // Filtered labels
+            datasets: [{ data: data.values }], // Pass data values
           }}
-          width={Math.max(labelsToShow.length * 60, screenWidth)} // Dynamic width for scrolling
+          width={chartWidth} // Use the dynamic width
           height={250}
           yAxisSuffix={yAxisSuffix} // Suffix for Y-axis values
           chartConfig={{
@@ -44,7 +43,7 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps", thresholds = {} }) 
             backgroundGradientFrom: '#eff3ff',
             backgroundGradientTo: '#efefef',
             decimalPlaces: 2, // Number of decimal places for values
-            color: () => datasetColor, // Line color based on conditions
+            color: (opacity = 1) => datasetColor, // Line color based on conditions
             labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`, // Label color
             propsForHorizontalLabels: {
               fontSize: 9, // Horizontal label font size
@@ -55,7 +54,7 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps", thresholds = {} }) 
             propsForDots: {
               r: '6', // Dot size
               strokeWidth: '2', // Dot stroke width
-              stroke: datasetColor, // Dot stroke color based on thresholds
+              stroke: datasetColor, // Dot stroke color based on conditions
             },
           }}
           style={{
