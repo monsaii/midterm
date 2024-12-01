@@ -29,7 +29,7 @@ const RealTimeGraph = ({ data, title, yAxisSuffix = " Mbps", threshold }) => {
             labels: labelsToShow.slice(0, data.values.length),
             datasets: [{ data: data.values }],
           }}
-          width={Math.max(labelsToShow.length * 40, screenWidth)} // Adjust width multiplier here
+          width={Math.max(labelsToShow.length * 30, screenWidth)} // Adjust width multiplier here
           height={250}
           yAxisSuffix={yAxisSuffix}
           chartConfig={{
