@@ -133,10 +133,10 @@ const NetworkMonitor = ({ navigation }) => {
         <RealTimeGraph data={speedData} title="Wi-Fi Speed (Mbps)" yAxisSuffix=" Mbps" />
       </View>
       <View style={styles.chartContainer}>
-        <RealTimeGraph data={latencyData} title="Latency (ms)" yAxisSuffix=" ms" threshold={250} />
+        <RealTimeGraph data={latencyData} title="Latency (ms)" yAxisSuffix=" ms" threshold={155} />
       </View>
       <View style={styles.chartContainer}>
-        <RealTimeGraph data={packetLossData} title="Packet Loss (%)" yAxisSuffix=" %" threshold={9} />
+        <RealTimeGraph data={packetLossData} title="Packet Loss (%)" yAxisSuffix=" %" threshold={6} />
       </View>
 
       <View style={styles.buttonRow}>
