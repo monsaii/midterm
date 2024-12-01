@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import RealTimeGraph from './RealTimeGraph';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -35,27 +36,46 @@ const NetworkMonitor = ({ navigation }) => {
     if (isFinite(packetLoss)) packetLossBuffer.push(packetLoss);
   };
 
+  const saveHistoricalData = async (averagedData) => {
+    try {
+      const existingData = await AsyncStorage.getItem('historicalData');
+      const historicalData = existingData ? JSON.parse(existingData) : [];
+
+      const updatedData = [...historicalData, averagedData];
+      await AsyncStorage.setItem('historicalData', JSON.stringify(updatedData));
+    } catch (error) {
+      console.error('Failed to save historical data:', error);
+    }
+  };
+
   const calculateAverages = () => {
     if (speedBuffer.length === 0 || latencyBuffer.length === 0 || packetLossBuffer.length === 0) return;
 
     const timestamp = new Date().toLocaleTimeString();
 
-    const speedAvg = parseFloat((speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length).toFixed(2));
-    const latencyAvg = parseFloat((latencyBuffer.reduce((a, b) => a + b, 0) / latencyBuffer.length).toFixed(2));
-    const packetLossAvg = parseFloat((packetLossBuffer.reduce((a, b) => a + b, 0) / packetLossBuffer.length).toFixed(2));
+    const averagedData = {
+      timestamp,
+      speed: parseFloat((speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length).toFixed(2)),
+      latency: parseFloat((latencyBuffer.reduce((a, b) => a + b, 0) / latencyBuffer.length).toFixed(2)),
+      packetLoss: parseFloat((packetLossBuffer.reduce((a, b) => a + b, 0) / packetLossBuffer.length).toFixed(2)),
+    };
 
+    // Update graph data
     setSpeedData((prev) => ({
       labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), speedAvg],
+      values: [...prev.values.slice(-9), averagedData.speed],
     }));
     setLatencyData((prev) => ({
       labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), latencyAvg],
+      values: [...prev.values.slice(-9), averagedData.latency],
     }));
     setPacketLossData((prev) => ({
       labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), packetLossAvg],
+      values: [...prev.values.slice(-9), averagedData.packetLoss],
     }));
+
+    // Save to historical data
+    saveHistoricalData(averagedData);
 
     // Clear buffers
     speedBuffer.length = 0;
