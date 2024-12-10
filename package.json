@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^2.1.0",
+    "@react-native-community/netinfo": "^11.4.1",
     "@react-navigation/bottom-tabs": "^6.6.1",
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/native-stack": "^6.11.0",
     "@react-navigation/stack": "^6.4.1",
     "expo": "^52.0.7",
+    "expo-auth-session": "~6.0.0",
     "expo-document-picker": "^13.0.1",
     "expo-status-bar": "~2.0.0",
     "firebase": "^11.0.2",
@@ -29,7 +31,6 @@
     "react-native-screens": "~4.1.0",
     "react-native-svg": "^15.9.0",
     "react-native-vector-icons": "^10.2.0",
-    "expo-auth-session": "~6.0.0",
     "undefined": "expo-auth-session/providers/google"
   },
   "devDependencies": {

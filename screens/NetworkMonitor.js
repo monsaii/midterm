@@ -1,42 +1,55 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import RealTimeGraph from './RealTimeGraph';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import RealTimeGraph from "./RealTimeGraph";
+import Icon from "react-native-vector-icons/MaterialIcons";
 
 const NetworkMonitor = ({ navigation }) => {
   const [speedData, setSpeedData] = useState({
-    labels: Array(10).fill(''),
+    labels: Array(10).fill(""),
     values: Array(10).fill(0),
   });
   const [latencyData, setLatencyData] = useState({
-    labels: Array(10).fill(''),
+    labels: Array(10).fill(""),
     values: Array(10).fill(0),
   });
   const [packetLossData, setPacketLossData] = useState({
-    labels: Array(10).fill(''),
+    labels: Array(10).fill(""),
     values: Array(10).fill(0),
   });
 
   const [isCapturing, setIsCapturing] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
+  const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(true);
 
-  // Buffers for per-minute averaging
-  const speedBuffer = [];
-  const latencyBuffer = [];
-  const packetLossBuffer = [];
+  // Load and sync push notification preference on mount
+  useEffect(() => {
+    const syncPushNotificationPreference = async () => {
+      try {
+        const storedPreference = await AsyncStorage.getItem("pushNotifications");
+        const isEnabled = storedPreference === "true";
+        setPushNotificationsEnabled(isEnabled);
+      } catch (error) {
+        console.error("Error syncing push notification preference:", error);
+      }
+    };
 
-  const collectNetworkData = () => {
-    const speed = parseFloat((Math.random() * 100).toFixed(2));
-    const latency = parseFloat((Math.random() * 300).toFixed(2));
-    const packetLoss = parseFloat((Math.random() * 10).toFixed(2));
+    // Sync push notification preference every second
+    const interval = setInterval(syncPushNotificationPreference, 1000);
 
-    if (isFinite(speed)) speedBuffer.push(speed);
-    if (isFinite(latency)) latencyBuffer.push(latency);
-    if (isFinite(packetLoss)) packetLossBuffer.push(packetLoss);
-  };
+    return () => clearInterval(interval); // Cleanup interval on unmount
+  }, []);
 
+  // Save notification to AsyncStorage
   const saveNotification = async (title, description, severity) => {
+    if (!pushNotificationsEnabled) return; // Skip notifications if disabled
+
     const timestamp = new Date().toLocaleTimeString();
     const notification = {
       id: Date.now().toString(),
@@ -47,113 +60,110 @@ const NetworkMonitor = ({ navigation }) => {
     };
 
     try {
-      const existingNotifications = await AsyncStorage.getItem('notifications');
+      const existingNotifications = await AsyncStorage.getItem("notifications");
       const updatedNotifications = existingNotifications
         ? [...JSON.parse(existingNotifications), notification]
         : [notification];
-      await AsyncStorage.setItem('notifications', JSON.stringify(updatedNotifications));
+      await AsyncStorage.setItem("notifications", JSON.stringify(updatedNotifications));
     } catch (error) {
-      console.error('Failed to save notification:', error);
+      console.error("Failed to save notification:", error);
     }
   };
 
-  const calculateAverages = async () => {
-    if (speedBuffer.length === 0 || latencyBuffer.length === 0 || packetLossBuffer.length === 0) return;
+  // Save historical data to AsyncStorage
+  const saveHistoricalData = async (data) => {
+    try {
+      const existingData = await AsyncStorage.getItem("historicalData");
+      const historicalData = existingData ? JSON.parse(existingData) : [];
+
+      const updatedData = [...historicalData, data];
+      await AsyncStorage.setItem("historicalData", JSON.stringify(updatedData));
+    } catch (error) {
+      console.error("Failed to save historical data:", error);
+    }
+  };
+
+  // Collect network data
+  const collectNetworkData = () => {
+    const speed = parseFloat((Math.random() * 100).toFixed(2));
+    const latency = parseFloat((Math.random() * 300).toFixed(2));
+    const packetLoss = parseFloat((Math.random() * 10).toFixed(2));
 
     const timestamp = new Date().toLocaleTimeString();
-
-    const averagedData = {
-      timestamp,
-      speed: parseFloat((speedBuffer.reduce((a, b) => a + b, 0) / speedBuffer.length).toFixed(2)),
-      latency: parseFloat((latencyBuffer.reduce((a, b) => a + b, 0) / latencyBuffer.length).toFixed(2)),
-      packetLoss: parseFloat((packetLossBuffer.reduce((a, b) => a + b, 0) / packetLossBuffer.length).toFixed(2)),
-    };
-
-    // Check thresholds and create notifications
-    if (averagedData.latency > 155) {
-      await saveNotification("Alert", `Latency: ${averagedData.latency} ms exceeded threshold`, "High");
-    }
-
-    if (averagedData.packetLoss > 6) {
-      await saveNotification("Alert", `Packet Loss: ${averagedData.packetLoss}% exceeded threshold`, "Medium");
-    }
+    const data = { timestamp, speed, latency, packetLoss };
 
     // Update graph data
     setSpeedData((prev) => ({
-      labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), averagedData.speed],
+      labels: [...prev.labels.slice(1), timestamp],
+      values: [...prev.values.slice(1), speed],
     }));
+
     setLatencyData((prev) => ({
-      labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), averagedData.latency],
+      labels: [...prev.labels.slice(1), timestamp],
+      values: [...prev.values.slice(1), latency],
     }));
+
     setPacketLossData((prev) => ({
-      labels: [...prev.labels.slice(-9), timestamp],
-      values: [...prev.values.slice(-9), averagedData.packetLoss],
+      labels: [...prev.labels.slice(1), timestamp],
+      values: [...prev.values.slice(1), packetLoss],
     }));
 
-    // Save to historical data
-    await saveHistoricalData(averagedData);
+    // Save historical data
+    saveHistoricalData(data);
 
-    // Clear buffers
-    speedBuffer.length = 0;
-    latencyBuffer.length = 0;
-    packetLossBuffer.length = 0;
-  };
+    // Trigger notifications if enabled
+    if (latency > 155) {
+      saveNotification(
+        "High Latency Alert",
+        `Latency: ${latency} ms exceeds the threshold!`,
+        "High"
+      );
+    }
 
-  const saveHistoricalData = async (averagedData) => {
-    try {
-      const existingData = await AsyncStorage.getItem('historicalData');
-      const historicalData = existingData ? JSON.parse(existingData) : [];
-
-      const updatedData = [...historicalData, averagedData];
-      await AsyncStorage.setItem('historicalData', JSON.stringify(updatedData));
-    } catch (error) {
-      console.error('Failed to save historical data:', error);
+    if (packetLoss > 6) {
+      saveNotification(
+        "Packet Loss Alert",
+        `Packet Loss: ${packetLoss}% exceeds the threshold!`,
+        "Medium"
+      );
     }
   };
 
+  // Start capturing network data
   const startCapturing = () => {
     if (!isCapturing) {
       setIsCapturing(true);
-      const dataCollectionInterval = setInterval(collectNetworkData, 1000); // Collect every second
-      const averageCalculationInterval = setInterval(calculateAverages, 60000); // Calculate averages every minute
-      setIntervalId({ dataCollectionInterval, averageCalculationInterval });
+      const id = setInterval(() => {
+        collectNetworkData();
+      }, 60000); // Collect data every minute
+      setIntervalId(id);
     }
   };
 
+  // Stop capturing network data
   const stopCapturing = () => {
     if (isCapturing) {
       setIsCapturing(false);
-      clearInterval(intervalId.dataCollectionInterval);
-      clearInterval(intervalId.averageCalculationInterval);
+      clearInterval(intervalId);
       setIntervalId(null);
     }
   };
 
+  // Reload graph data
   const reloadGraphs = () => {
     setSpeedData({
-      labels: Array(10).fill(''),
+      labels: Array(10).fill(""),
       values: Array(10).fill(0),
     });
     setLatencyData({
-      labels: Array(10).fill(''),
+      labels: Array(10).fill(""),
       values: Array(10).fill(0),
     });
     setPacketLossData({
-      labels: Array(10).fill(''),
+      labels: Array(10).fill(""),
       values: Array(10).fill(0),
     });
   };
-
-  useEffect(() => {
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId.dataCollectionInterval);
-        clearInterval(intervalId.averageCalculationInterval);
-      }
-    };
-  }, [intervalId]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -163,10 +173,10 @@ const NetworkMonitor = ({ navigation }) => {
         <RealTimeGraph data={speedData} title="Wi-Fi Speed (Mbps)" yAxisSuffix=" Mbps" />
       </View>
       <View style={styles.chartContainer}>
-        <RealTimeGraph data={latencyData} title="Latency (ms)" yAxisSuffix=" ms" threshold={155} />
+        <RealTimeGraph data={latencyData} title="Latency (ms)" yAxisSuffix=" ms" />
       </View>
       <View style={styles.chartContainer}>
-        <RealTimeGraph data={packetLossData} title="Packet Loss (%)" yAxisSuffix=" %" threshold={6} />
+        <RealTimeGraph data={packetLossData} title="Packet Loss (%)" yAxisSuffix=" %" />
       </View>
 
       <View style={styles.buttonRow}>
@@ -174,7 +184,7 @@ const NetworkMonitor = ({ navigation }) => {
           style={[styles.button, isCapturing ? styles.stopButton : styles.startButton]}
           onPress={isCapturing ? stopCapturing : startCapturing}
         >
-          <Text style={styles.buttonText}>{isCapturing ? 'Stop Capturing' : 'Start Capturing'}</Text>
+          <Text style={styles.buttonText}>{isCapturing ? "Stop Capturing" : "Start Capturing"}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.button, styles.reloadButton]} onPress={reloadGraphs}>
           <Icon name="refresh" size={24} color="#fff" />
@@ -190,45 +200,46 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
     marginVertical: 10,
-    backgroundColor: '#8BFFBA',
+    backgroundColor: "#8BFFBA",
     borderRadius: 30,
-    marginTop: 20,
     paddingVertical: 20,
     marginHorizontal: 40,
   },
   chartContainer: {
     borderRadius: 12,
     marginVertical: 10,
+    backgroundColor: "#f9f9f9",
+    padding: 10,
   },
   buttonRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 10,
   },
   button: {
     padding: 12,
     borderRadius: 30,
     marginVertical: 10,
-    alignItems: 'center',
+    alignItems: "center",
     marginHorizontal: 10,
   },
   startButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: "#28a745",
   },
   stopButton: {
-    backgroundColor: '#dc3545',
+    backgroundColor: "#dc3545",
   },
   reloadButton: {
-    backgroundColor: '#007bff',
+    backgroundColor: "#007bff",
   },
   buttonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
 });
 
