@@ -203,7 +203,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginVertical: 10,
-    backgroundColor: "#8BFFBA",
+    backgroundColor: "#94DEA5",
     borderRadius: 30,
     paddingVertical: 20,
     marginHorizontal: 40,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
   chartContainer: {
     borderRadius: 12,
     marginVertical: 10,
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "#99cccc",
     padding: 10,
   },
   buttonRow: {
