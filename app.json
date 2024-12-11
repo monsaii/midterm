@@ -15,7 +15,7 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.midterm", // Add this line
+      "package": "com.midterm", 
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
