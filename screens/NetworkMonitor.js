@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   Text,
@@ -26,29 +26,40 @@ const NetworkMonitor = ({ navigation }) => {
 
   const [isCapturing, setIsCapturing] = useState(false);
   const [intervalId, setIntervalId] = useState(null);
-  const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(true);
+  const [pushNotificationsEnabled, setPushNotificationsEnabled] = useState(false);
+  const pushNotificationsRef = useRef(pushNotificationsEnabled); // Reference for sync
 
-  // Load and sync push notification preference on mount
+  // Synchronize toggle state with AsyncStorage
   useEffect(() => {
-    const syncPushNotificationPreference = async () => {
+    const loadToggleState = async () => {
       try {
         const storedPreference = await AsyncStorage.getItem("pushNotifications");
         const isEnabled = storedPreference === "true";
         setPushNotificationsEnabled(isEnabled);
+        pushNotificationsRef.current = isEnabled; // Update ref
       } catch (error) {
-        console.error("Error syncing push notification preference:", error);
+        console.error("Error loading push notification preference:", error);
       }
     };
-
-    // Sync push notification preference every second
-    const interval = setInterval(syncPushNotificationPreference, 1000);
-
-    return () => clearInterval(interval); // Cleanup interval on unmount
+    loadToggleState();
   }, []);
+
+  // Update AsyncStorage when toggle changes
+  useEffect(() => {
+    pushNotificationsRef.current = pushNotificationsEnabled; // Sync ref with state
+    const saveToggleState = async () => {
+      try {
+        await AsyncStorage.setItem("pushNotifications", pushNotificationsEnabled.toString());
+      } catch (error) {
+        console.error("Error saving push notification preference:", error);
+      }
+    };
+    saveToggleState();
+  }, [pushNotificationsEnabled]);
 
   // Save notification to AsyncStorage
   const saveNotification = async (title, description, severity) => {
-    if (!pushNotificationsEnabled) return; // Skip notifications if disabled
+    if (!pushNotificationsRef.current) return; // Skip notifications if disabled
 
     const timestamp = new Date().toLocaleTimeString();
     const notification = {
@@ -112,20 +123,22 @@ const NetworkMonitor = ({ navigation }) => {
     saveHistoricalData(data);
 
     // Trigger notifications if enabled
-    if (latency > 155) {
-      saveNotification(
-        "High Latency Alert",
-        `Latency: ${latency} ms exceeds the threshold!`,
-        "High"
-      );
-    }
+    if (pushNotificationsRef.current) {
+      if (latency > 155) {
+        saveNotification(
+          "High Latency Alert",
+          `Latency: ${latency} ms exceeds the threshold!`,
+          "High"
+        );
+      }
 
-    if (packetLoss > 6) {
-      saveNotification(
-        "Packet Loss Alert",
-        `Packet Loss: ${packetLoss}% exceeds the threshold!`,
-        "Medium"
-      );
+      if (packetLoss > 6) {
+        saveNotification(
+          "Packet Loss Alert",
+          `Packet Loss: ${packetLoss}% exceeds the threshold!`,
+          "Medium"
+        );
+      }
     }
   };
 
@@ -135,7 +148,7 @@ const NetworkMonitor = ({ navigation }) => {
       setIsCapturing(true);
       const id = setInterval(() => {
         collectNetworkData();
-      }, 60000); // Collect data every minute
+      }, 3000); // Collect data every 30 seconds
       setIntervalId(id);
     }
   };

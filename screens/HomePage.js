@@ -1,13 +1,13 @@
 import React from 'react';
 import { ScrollView, View, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
-import NetworkMonitor from './NetworkMonitor'; // The network monitor component
+import NetworkMonitor from './NetworkMonitor'; 
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ChatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 export default function HomePage({ navigation }) {
   return (
     <ImageBackground
-      source={require('../assets/monitoring.png')} // Your background image
+      source={require('../assets/monitoring.png')} 
       style={styles.image}
       resizeMode="cover"
     >

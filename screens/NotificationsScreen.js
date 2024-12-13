@@ -59,7 +59,7 @@ export default function NotificationScreen({ navigation }) {
         text: 'Clear',
         onPress: async () => {
           try {
-            await AsyncStorage.removeItem('notifications');
+            await AsyncStorage.setItem('notifications', JSON.stringify([]));
             setNotifications([]);
             Alert.alert('Success', 'All notifications cleared.');
           } catch (error) {
